@@ -7,12 +7,17 @@
  */
 
 /**
- * @param $currentPage: Can be either "Home", "Cart", "Admin". Helps set class active on header links
+ * @param $currentPage : Can be either "Home", "Cart", "Admin". Helps set class active on header links
  * @return string: HTML UI element of the Header Navigation System
  */
-function getHeader($currentPage)
+class Navigation
 {
-    return "<nav class=\"navbar navbar-default\">
+    static function header($currentPage)
+    {
+        return "<html>"
+            . Navigation::getHead() .
+            "<body>
+            <nav class=\"navbar navbar-default\">
                 <div class=\"container-fluid\">
                     <div class=\"navbar-header\">
                         <a class=\"navbar-brand\" href=\"#\">Manga Shop</a>
@@ -26,4 +31,20 @@ function getHeader($currentPage)
                     </div>
                 </div>
             </nav>";
+    }
+
+    public static function footer()
+    {
+        return "</body></html>";
+    }
+
+    private static function getHead()
+    {
+        return "
+            <head>
+                <link rel=\"stylesheet\" href=\"/PHP-eCommerce-Manga/css/bootstrap.min.css\"
+                      integrity=\"sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u\" crossorigin=\"anonymous\">
+            </head>";
+    }
+
 }
