@@ -18,7 +18,7 @@ class Navigation
             . Navigation::getHead() .
             "<body>
             <nav class=\"navbar navbar-default\">
-                <div class=\"container-fluid\">
+                <div class=\"container\">
                     <div class=\"navbar-header\">
                         <a class=\"navbar-brand\" href=\"#\">Manga Shop</a>
                     </div>
