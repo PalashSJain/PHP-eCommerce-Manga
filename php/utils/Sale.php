@@ -18,7 +18,7 @@ class Sale
         $this->db = new DB();
     }
 
-    public function getProductsOnSale()
+    public function makeProductsOnSale()
     {
         $html = "";
 

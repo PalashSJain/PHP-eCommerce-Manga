@@ -19,6 +19,6 @@ class LIB_project1{
 
     public function getProductsOnSale()
     {
-        return $this->sale->getProductsOnSale();
+        return $this->sale->makeProductsOnSale();
     }
 }
