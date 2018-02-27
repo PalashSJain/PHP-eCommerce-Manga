@@ -19,21 +19,16 @@ if (isset($_POST['addToCart'])) {
 echo Navigation::header("Home");
 echo "
 <div class='py-5'>
-    <div class='row'>
-        <div class='col-lg-2 col-md-2'><h3>SALE!</h3></div>
-        <div class='col-lg-10 col-md-10'>"
-            . $util->getProductsOnSale() .
-        "</div>
+    <div>
+        <h3>SALE!</h3>"
+    . $util->getProductsOnSale() .
+    "</div>
     </div>
-    </div>
-    <hr>
-    
-    <div class='row'>
-        <div class='col-lg-2 col-md-2'><h3>Other Mangas!</h3></div>
-        <div class='col-lg-10 col-md-10'>"
-            . $util->getProductsOnCatalog() .
-        "</div>
-    </div>
+     
+    <div>
+        <h3>Other Mangas in Catalog!</h3>"
+    . $util->getProductsOnCatalog() .
+    "</div>
 </div>";
 echo Navigation::footer();
 ?>

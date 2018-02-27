@@ -62,8 +62,11 @@ class Product
     {
         return
             "<div class='card'>
-                <img class='card-img-top' src='{$this->getImageName()}' alt='Card image'>
-                <div class='card-body'>
+                <div class='row'>
+                    <div class='col-md-5 no-padding-on-right'>
+                        <img class='card-img-top' src='{$this->getImageName()}' alt='Card image'>
+                    </div>
+                    <div class='col-md-7 card-body'>
                     <h4 class='card-title'>{$this->getProductName()}</h4>
                     <p class='card-text'>{$this->getDescription()}</p>
                     <p class='card-text'>"
@@ -72,6 +75,7 @@ class Product
                     <form method='post'>
                         <button type=\"submit\" class=\"btn btn-primary\" name='addToCart' value='{$this->id}' ".$this->disabledIfInCart($this->id).">Add to cart</button>
                     </form>
+                </div>
                 </div>
             </div>";
     }
