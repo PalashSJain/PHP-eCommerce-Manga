@@ -6,30 +6,17 @@
  * Time: 4:03 PM
  */
 
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
+
 class Catalog
 {
-
-    private $db, $product;
-
-    function __construct()
-    {
-        $this->db = new DB();
-    }
-
-    function __destruct()
-    {
-        $this->db = null;
-    }
-
-    public function makeProductsOnCatalog()
+    public function makeProductsOnCatalog($products = [])
     {
         $html = "";
 
         $html .= "<div class='card-columns'>";
-        $products = $this->db->getProductsOnCatalog();
         foreach ($products as $product) {
-            $this->product = $product;
-            $html .= $this->product->makeHTMLCode();
+            $html .= $product->makeHTMLCode();
         }
         $html .= "</div>";
 
