@@ -86,6 +86,6 @@ class Product
 
     private function getPriceToShow($salePrice, $origPrice)
     {
-        return ($salePrice != 0) ? "Price: <s>\$$origPrice</s> \$$salePrice" : "Price: \$$origPrice";
+        return ($salePrice == 0) ? "Price: \$$origPrice" : "Price: <s>\$$origPrice</s> \$$salePrice";
     }
 }
