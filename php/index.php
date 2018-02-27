@@ -9,7 +9,12 @@
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
 
+session_start();
 $util = new LIB_project1();
+
+if (isset($_POST['addToCart'])) {
+    $util->addProductToCart($_POST['addToCart']);
+}
 
 echo Navigation::header("Home");
 echo "

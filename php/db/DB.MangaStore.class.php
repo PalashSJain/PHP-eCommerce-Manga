@@ -8,7 +8,7 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
 
-class DB
+class dbMangaStore
 {
 
     private $dbh;
@@ -62,6 +62,7 @@ class DB
             ':salePrice' => $salePrice));
         echo $stmt->rowCount();
     }
+
 }
 
 //$db = new DB();

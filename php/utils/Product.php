@@ -8,7 +8,7 @@
 
 class Product
 {
-    private $productName, $description, $price, $quantity, $imageName, $salePrice;
+    private $id, $productName, $description, $price, $quantity, $imageName, $salePrice;
 
     /**
      * @return mixed
@@ -68,9 +68,16 @@ class Product
                     <p class='card-text'>{$this->getDescription()}</p>
                     <p class='card-text'>"
             . $this->getPriceToShow($this->getSalePrice(), $this->getPrice())
-            . "</p>
+                    . "</p>
+                    <form method='post'>
+                        <button type=\"submit\" class=\"btn btn-primary\" name='addToCart' value='{$this->id}' ".$this->disabledIfInCart($this->id).">Add to cart</button>
+                    </form>
                 </div>
             </div>";
+    }
+
+    private function disabledIfInCart($productId){
+        return in_array($productId, $_SESSION["ProductsInCart"]) == 1 ? "disabled" : "";
     }
 
     private function getPriceToShow($salePrice, $origPrice)

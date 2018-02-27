@@ -8,7 +8,7 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Sale.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.class.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
 class LIB_project1{
 
@@ -18,7 +18,10 @@ class LIB_project1{
 
     function __construct()
     {
-        $this->db = new DB();
+        if (!isset($_SESSION['ProductsInCart'])) {
+            $_SESSION['ProductsInCart'] = array();
+        }
+        $this->db = new dbMangaStore();
         $this->sale = new Sale();
         $this->catalog = new Catalog();
     }
@@ -38,5 +41,11 @@ class LIB_project1{
     {
         $products = $this->db->getProductsOnCatalog();
         return $this->catalog->makeProductsOnCatalog($products);
+    }
+
+    public function addProductToCart($productId)
+    {
+        $_SESSION['ProductsInCart'][] = $productId;
+        $_SESSION['ProductsInCart'] = array_unique($_SESSION['ProductsInCart']);
     }
 }
