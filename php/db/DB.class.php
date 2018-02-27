@@ -10,18 +10,40 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
 
 class DB{
 
+    private $dbh;
+
+    function __construct()
+    {
+        try {
+            $this->dbh = new PDO("mysql:host=localhost;dbname=mangastore", 'root', '');
+            $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        } catch (PDOException $e) {
+            echo $e->getMessage();
+            die();
+        }
+    }
+
     public function getProductsOnSale()
     {
-        $products = array();
+        $query = "select * from products where salePrice != 0";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
 
-        $products[] = new Product("One Piece", "Gomu Gomu no", 100, 10, "https://nerds4lifeblog.com/wp-content/uploads/2018/01/1447745856-d1263c53574b445d10257a1e0ae4b89c.jpeg", 80);
-        $products[] = new Product("Bleach", "Zametsu", 200, 5, "https://nerds4lifeblog.com/wp-content/uploads/2018/01/1447745856-d1263c53574b445d10257a1e0ae4b89c.jpeg", 180);
-        $products[] = new Product("One Piece", "Gomu Gomu no", 100, 10, "https://nerds4lifeblog.com/wp-content/uploads/2018/01/1447745856-d1263c53574b445d10257a1e0ae4b89c.jpeg", 80);
-        $products[] = new Product("Bleach", "Zametsu", 200, 5, "https://nerds4lifeblog.com/wp-content/uploads/2018/01/1447745856-d1263c53574b445d10257a1e0ae4b89c.jpeg", 180);
-        $products[] = new Product("One Piece", "Gomu Gomu no", 100, 10, "https://nerds4lifeblog.com/wp-content/uploads/2018/01/1447745856-d1263c53574b445d10257a1e0ae4b89c.jpeg", 80);
-        $products[] = new Product("Bleach", "Zametsu", 200, 5, "https://nerds4lifeblog.com/wp-content/uploads/2018/01/1447745856-d1263c53574b445d10257a1e0ae4b89c.jpeg", 180);
-        $products[] = new Product("One Piece", "Gomu Gomu no", 100, 10, "https://nerds4lifeblog.com/wp-content/uploads/2018/01/1447745856-d1263c53574b445d10257a1e0ae4b89c.jpeg", 80);
-        $products[] = new Product("Bleach", "Zametsu", 200, 5, "https://nerds4lifeblog.com/wp-content/uploads/2018/01/1447745856-d1263c53574b445d10257a1e0ae4b89c.jpeg", 180);
+        $products = $stmt->fetchAll();
+
+        return $products;
+
+    }
+
+    public function getProductsOnCatalog()
+    {
+        $query = "select * from products where salePrice = 0";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
+
+        $products = $stmt->fetchAll();
 
         return $products;
 

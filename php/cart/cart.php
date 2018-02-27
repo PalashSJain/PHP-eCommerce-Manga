@@ -6,7 +6,9 @@
  * Time: 10:11 PM
  */
 
+include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
+
 echo Navigation::header("Cart");
 echo Navigation::footer();
 ?>

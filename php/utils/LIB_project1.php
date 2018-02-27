@@ -7,18 +7,25 @@
  */
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Sale.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
 
 class LIB_project1{
 
-    private $sale;
+    private $sale, $catalog;
 
     function __construct()
     {
         $this->sale = new Sale();
+        $this->catalog = new Catalog();
     }
 
     public function getProductsOnSale()
     {
         return $this->sale->makeProductsOnSale();
+    }
+
+    public function getProductsOnCatalog()
+    {
+        return $this->catalog->makeProductsOnCatalog();
     }
 }

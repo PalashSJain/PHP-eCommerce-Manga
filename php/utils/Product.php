@@ -10,16 +10,6 @@ class Product
 {
     private $productName, $description, $price, $quantity, $imageName, $salePrice;
 
-    function __construct($productName, $description, $price, $quantity=0, $imageName="", $salePrice=0)
-    {
-        $this->productName = $productName;
-        $this->description = $description;
-        $this->price = $price;
-        $this->quantity = $quantity;
-        $this->imageName = $imageName;
-        $this->salePrice = $salePrice;
-    }
-
     /**
      * @return mixed
      */
