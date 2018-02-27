@@ -13,7 +13,7 @@ class Product
     /**
      * @return mixed
      */
-    public function getProductName() : string
+    public function getProductName(): string
     {
         return $this->productName;
     }
@@ -21,7 +21,7 @@ class Product
     /**
      * @return mixed
      */
-    public function getDescription() : string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -29,7 +29,7 @@ class Product
     /**
      * @return mixed
      */
-    public function getPrice() : int
+    public function getPrice(): int
     {
         return $this->price;
     }
@@ -56,5 +56,25 @@ class Product
     public function getSalePrice(): int
     {
         return $this->salePrice;
+    }
+
+    public function makeHTMLCode()
+    {
+        return
+            "<div class='card'>
+                <img class='card-img-top' src='{$this->getImageName()}' alt='Card image'>
+                <div class='card-body'>
+                    <h4 class='card-title'>{$this->getProductName()}</h4>
+                    <p class='card-text'>{$this->getDescription()}</p>
+                    <p class='card-text'>"
+            . $this->getPriceToShow($this->getSalePrice(), $this->getPrice())
+            . "</p>
+                </div>
+            </div>";
+    }
+
+    private function getPriceToShow($salePrice, $origPrice)
+    {
+        return ($salePrice != 0) ? "New Price: <s>\$$origPrice</s> \$$salePrice" : "Price: \$$origPrice";
     }
 }

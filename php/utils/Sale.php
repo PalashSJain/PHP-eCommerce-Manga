@@ -18,6 +18,11 @@ class Sale
         $this->db = new DB();
     }
 
+    function __destruct()
+    {
+        $this->db = null;
+    }
+
     public function makeProductsOnSale()
     {
         $html = "";
@@ -25,23 +30,12 @@ class Sale
         $html .= "<div class='card-columns'>";
         $products = $this->db->getProductsOnSale();
         foreach ($products as $product) {
-            $html .= $this->makeHTMLCodeForProduct($product);
+            $this->product = $product;
+            $html .= $this->product->makeHTMLCode();
         }
         $html .= "</div>";
 
         return $html;
     }
 
-    private function makeHTMLCodeForProduct(Product $product)
-    {
-        $this->product = $product;
-        return
-            "<div class='card'>
-                <img class='card-img-top' src='{$this->product->getImageName()}' alt='Card image'>
-                <div class='card-body'>
-                    <h4 class='card-title'>{$this->product->getProductName()}</h4>
-                    <p class='card-text'>{$this->product->getDescription()}</p>
-                </div>
-            </div>";
-    }
 }
