@@ -8,11 +8,12 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Sale.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Login.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
 class LIB_project1{
 
-    private $sale, $catalog;
+    private $sale, $catalog, $login;
 
     private $db;
 
@@ -24,6 +25,7 @@ class LIB_project1{
         $this->db = new dbMangaStore();
         $this->sale = new Sale();
         $this->catalog = new Catalog();
+        $this->login = new Login();
     }
 
     function __destruct()
@@ -47,5 +49,10 @@ class LIB_project1{
     {
         $_SESSION['ProductsInCart'][] = $productId;
         $_SESSION['ProductsInCart'] = array_unique($_SESSION['ProductsInCart']);
+    }
+
+    public function showAdminLoginPage()
+    {
+        return $this->login->showLoginPage();
     }
 }
