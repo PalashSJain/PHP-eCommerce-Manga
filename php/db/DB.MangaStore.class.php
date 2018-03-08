@@ -63,6 +63,17 @@ class dbMangaStore
         echo $stmt->rowCount();
     }
 
+    public function isAdmin($userID, $pwd)
+    {
+        $query = "select count(*) as no_of_users from users where UserID = :userID and Password = :pwd";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':userID' => $userID,
+            ':pwd' => $pwd));
+        $data = $stmt->fetch();
+        return $data["no_of_users"] == 1;
+    }
+
 }
 
 //$db = new DB();

@@ -22,14 +22,14 @@ class Login
                             <h3 class='mb-0'>Login</h3>
                         </div>
                         <div class='card-body'>
-                            <form class='form' role='form' autocomplete='off' id='adminLogin' novalidate='' method='POST'>
+                            <form class='form' role='form' autocomplete='off' id='adminLogin' novalidate='' method='POST' action=''>
                                 <div class='form-group'>
                                     <label for='userID'>UserID</label>
                                     <input type='text' class='form-control form-control-lg rounded-0' name='userID' id='userID' required>
                                 </div>
                                 <div class='form-group'>
                                     <label for='pwd'>Password</label>
-                                    <input type='password' class='form-control form-control-lg rounded-0' id='pwd' required>
+                                    <input type='password' class='form-control form-control-lg rounded-0' id='pwd' name='pwd' required>
                                 </div>
                                 <button type='submit' class='btn btn-success btn-lg float-right' id='btnLogin'>Login</button>
                             </form>

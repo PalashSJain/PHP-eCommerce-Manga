@@ -11,11 +11,22 @@ session_start();
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
 
-$util = new LIB_project1();
-
 echo Navigation::header("Admin");
 
-echo $util->showAdminLoginPage();
+$util = new LIB_project1();
+if (isset($_POST['userID']) && isset($_POST['pwd']) && $util->isAdmin($_POST['userID'], $_POST['pwd'])) {
+    session_unset();
+    session_destroy();
+    session_name("Admin");
+    session_start();
+    $_SESSION['isAdmin'] = true;
+    echo "Logged in.";
+}
+else {
+    echo $util->showAdminLoginPage();
+}
+
+echo $_SESSION["isAdmin"];
 
 echo Navigation::footer();
 ?>

@@ -55,4 +55,9 @@ class LIB_project1{
     {
         return $this->login->showLoginPage();
     }
+
+    public function isAdmin($userID, $pwd)
+    {
+        return $this->db->isAdmin($userID, $pwd);
+    }
 }
