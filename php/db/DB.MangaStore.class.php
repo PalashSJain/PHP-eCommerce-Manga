@@ -84,13 +84,44 @@ class dbMangaStore
         ));
     }
 
-    public function replaceCartWithNewSessionID($oldID, $newID){
+    public function replaceCartWithNewSessionID($oldID, $newID)
+    {
         $query = "update carts set sessionID = :newID where sessionID = :oldID";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':newID' => $newID,
             ':oldID' => $oldID
         ));
+    }
+
+    public function getNumberOfProductsInCart($sessionID)
+    {
+        $query = "select count(*) as no_of_products from carts where sessionID = :sessionID";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':sessionID' => $sessionID));
+        $data = $stmt->fetch();
+        return $data["no_of_products"];
+    }
+
+    public function getProductsInCart($sessionID)
+    {
+        $query = "select c.quantity as quantity, p.productName as title, p.price as price, p.description as description,
+ p.imageName as imageName from carts c INNER join products p on c.productID = p.productID where sessionID = :sessionID";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':sessionID' => $sessionID));
+        return $stmt->fetchAll();
+    }
+
+    public function getCartTotal($sessionID)
+    {
+        $query = "select sum(p.price) as total from carts c inner join products p on c.productID = p.productID where c.sessionID = :sessionID";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':sessionID' => $sessionID));
+        $data = $stmt->fetch();
+        return $data["total"];
     }
 
 }

@@ -11,7 +11,8 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Login.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
-class LIB_project1{
+class LIB_project1
+{
 
     private $sale, $catalog, $login;
 
@@ -61,10 +62,49 @@ class LIB_project1{
     {
         $sid = session_id();
         if (isset($_COOKIE['SID'])) {
-            if ($_COOKIE['SID'] != $sid){
+            if ($_COOKIE['SID'] != $sid) {
                 $this->db->replaceCartWithNewSessionID($_COOKIE['SID'], $sid);
             }
         }
-        setcookie('SID', $sid, time()+60*60*24*30);
+        setcookie('SID', $sid, time() + 60 * 60 * 24 * 30, "/");
+    }
+
+    public function isCartEmpty()
+    {
+        return $this->db->getNumberOfProductsInCart(session_id()) == 0;
+    }
+
+    public function getProductsInCart()
+    {
+        $rows = "";
+        $carts = $this->db->getProductsInCart(session_id());
+        foreach ($carts as $product) {
+            $rows .= "<tr>";
+            $rows .= "<th scope='row'>
+<div class='row'>
+    <div class='col-md-3 no-padding-on-right'>
+        <img class='card-img-top' src='{$product['imageName']}' alt='Card image'>
+    </div>
+    <div class='col-md-9 card-body'>
+        <h4 class='card-title'>{$product['title']}</h4>
+        <p class='card-text'>{$product['description']}</p>
+    </div>
+    </div>
+</th>";
+            $rows .= "<td>{$product['quantity']}</td>";
+            $rows .= "<td>{$product['price']}</td>";
+            $rows .= "<td>{$product['price']}</td>";
+            $rows .= "</tr>";
+        }
+        return $rows;
+    }
+
+    public function getCartTotal()
+    {
+        $total = $this->db->getCartTotal(session_id());
+        return "<tr>
+<td colspan='3'>Total Cost:</td>
+<td>{$total}</td>
+</tr>";
     }
 }

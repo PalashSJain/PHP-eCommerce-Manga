@@ -49,8 +49,8 @@ HEAD;
   <div class="navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto">
       <li class="nav-item ".($currentPage == "Home" ? "active" : "").""><a class="nav-link" href="/PHP-eCommerce-Manga/php/index.php">Home</a></li>
-      <li class="nav-item ".($currentPage == "Cart" ? "active" : "").""><a class="nav-link" href="/PHP-eCommerce-Manga/php/cart/cart.php">Cart</a></li>
-      <li class="nav-item ".($currentPage == "Admin" ? "active" : "").""><a class="nav-link" href="/PHP-eCommerce-Manga/php/admin/admin.php">Admin</a></li>
+      <li class="nav-item ".($currentPage == "Cart" ? "active" : "").""><a class="nav-link" href="/PHP-eCommerce-Manga/php/cart.php">Cart</a></li>
+      <li class="nav-item ".($currentPage == "Admin" ? "active" : "").""><a class="nav-link" href="/PHP-eCommerce-Manga/php/admin.php">Admin</a></li>
     </ul>
   </div>
 </nav>
