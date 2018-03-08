@@ -74,6 +74,25 @@ class dbMangaStore
         return $data["no_of_users"] == 1;
     }
 
+    public function addToCart($productId, $sid)
+    {
+        $query = "insert into carts (sessionID, productID) values (:sessionID, :productID)";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':sessionID' => $sid,
+            ':productID' => $productId
+        ));
+    }
+
+    public function replaceCartWithNewSessionID($oldID, $newID){
+        $query = "update carts set sessionID = :newID where sessionID = :oldID";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':newID' => $newID,
+            ':oldID' => $oldID
+        ));
+    }
+
 }
 
 //$db = new DB();

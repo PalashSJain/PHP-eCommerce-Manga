@@ -11,9 +11,9 @@ include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
 
 session_start();
 $util = new LIB_project1();
-
+$util->onLoad();
 if (isset($_POST['addToCart'])) {
-    $util->addProductToCart($_POST['addToCart']);
+    $util->addProductToCart($_POST['addToCart'], $_COOKIE['SID']);
 }
 
 echo Navigation::header("Home");

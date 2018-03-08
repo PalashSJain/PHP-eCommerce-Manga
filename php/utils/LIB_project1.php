@@ -19,9 +19,6 @@ class LIB_project1{
 
     function __construct()
     {
-        if (!isset($_SESSION['ProductsInCart'])) {
-            $_SESSION['ProductsInCart'] = array();
-        }
         $this->db = new dbMangaStore();
         $this->sale = new Sale();
         $this->catalog = new Catalog();
@@ -45,10 +42,9 @@ class LIB_project1{
         return $this->catalog->makeProductsOnCatalog($products);
     }
 
-    public function addProductToCart($productId)
+    public function addProductToCart($productId, $sid)
     {
-        $_SESSION['ProductsInCart'][] = $productId;
-        $_SESSION['ProductsInCart'] = array_unique($_SESSION['ProductsInCart']);
+        $this->db->addToCart($productId, $sid);
     }
 
     public function showAdminLoginPage()
@@ -59,5 +55,16 @@ class LIB_project1{
     public function isAdmin($userID, $pwd)
     {
         return $this->db->isAdmin($userID, $pwd);
+    }
+
+    public function onLoad()
+    {
+        $sid = session_id();
+        if (isset($_COOKIE['SID'])) {
+            if ($_COOKIE['SID'] != $sid){
+                $this->db->replaceCartWithNewSessionID($_COOKIE['SID'], $sid);
+            }
+        }
+        setcookie('SID', $sid, time()+60*60*24*30);
     }
 }

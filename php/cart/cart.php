@@ -11,6 +11,9 @@ session_start();
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
 
+$util = new LIB_project1();
+$util->onLoad();
+
 echo Navigation::header("Cart");
 echo Navigation::footer();
 ?>
