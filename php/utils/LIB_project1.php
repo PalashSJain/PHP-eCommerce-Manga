@@ -80,17 +80,18 @@ class LIB_project1
         $carts = $this->db->getProductsInCart(session_id());
         foreach ($carts as $product) {
             $rows .= "<tr>";
-            $rows .= "<th scope='row'>
-<div class='row'>
-    <div class='col-md-3 no-padding-on-right'>
-        <img class='card-img-top' src='{$product['imageName']}' alt='Card image'>
-    </div>
-    <div class='col-md-9 card-body'>
-        <h4 class='card-title'>{$product['title']}</h4>
-        <p class='card-text'>{$product['description']}</p>
-    </div>
-    </div>
-</th>";
+            $rows .= "
+                <th scope='row'>
+                    <div class='row'>
+                        <div class='col-md-3 no-padding-on-right'>
+                            <img class='card-img-top' src='{$product['imageName']}' alt='Card image'>
+                        </div>
+                        <div class='col-md-9 card-body'>
+                            <h4 class='card-title'>{$product['title']}</h4>
+                            <p class='card-text'>{$product['description']}</p>
+                        </div>
+                    </div>
+                </th>";
             $rows .= "<td>{$product['quantity']}</td>";
             $rows .= "<td>{$product['price']}</td>";
             $rows .= "<td>{$product['price']}</td>";
@@ -102,9 +103,52 @@ class LIB_project1
     public function getCartTotal()
     {
         $total = $this->db->getCartTotal(session_id());
-        return "<tr>
-<td colspan='3'>Total Cost:</td>
-<td>{$total}</td>
-</tr>";
+        return "
+            <tr>
+                <td colspan='3'>Total Cost:</td>
+                <td>{$total}</td>
+            </tr>";
+    }
+
+    public function getCartTable()
+    {
+        return "
+            <table class='table table-striped'>
+                <thead>
+                    <tr>
+                        <th scope='col'>Product</th>
+                        <th scope='col'>Quantity</th>
+                        <th scope='col'>Price per Item</th>
+                        <th scope='col'>Total Price</th>
+                    </tr>
+                </thead>
+                <tbody>"
+            . $this->getProductsInCart()
+            . $this->getCartTotal() .
+            "</tbody>
+            </table>";
+    }
+
+    public function getBtnToClearCart()
+    {
+        return "
+    <form method='post' onsubmit='return confirm(\"Are you sure you want to clear out the cart?\")'>
+        <input type='submit' name='clearCart' value='Empty Cart' />
+    </form>
+    ";
+    }
+
+    public function clearCart()
+    {
+        $this->db->clearCart(session_id());
+    }
+
+    public function showEmptyCart()
+    {
+        return "
+<div class='jumbotron h-100'>
+  <h1>Your cart is empty!</h1> 
+  <p>Click <a href='/PHP-eCommerce-Manga/php/index.php'>here</a> to start shopping...</p> 
+</div>";
     }
 }

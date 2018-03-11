@@ -124,6 +124,15 @@ class dbMangaStore
         return $data["total"];
     }
 
+    public function clearCart($sessionID)
+    {
+        $query = "delete from carts where sessionID = :sessionID";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':sessionID' => $sessionID
+    ));
+    }
+
 }
 
 //$db = new DB();
