@@ -87,7 +87,9 @@ class LIB_project1
     public function getProductsInCart()
     {
         $rows = "";
+        $netSum = 0;
         $carts = $this->db->getProductsInCart(session_id());
+
         foreach ($carts as $product) {
             $rows .= "<tr>";
             $rows .= "
@@ -103,21 +105,25 @@ class LIB_project1
                     </div>
                 </th>";
             $rows .= "<td>{$product['quantity']}</td>";
-            $rows .= "<td>{$product['price']}</td>";
-            $rows .= "<td>{$product['price']}</td>";
-            $rows .= "</tr>";
-        }
-        return $rows;
-    }
+            if (intval($product['salePrice']) != 0) {
+                $rows .= "<td>{$product['salePrice']}</td>";
+                $total = intval($product['quantity']) * intval($product['salePrice']);
+            } else {
+                $rows .= "<td>{$product['price']}</td>";
+                $total = intval($product['quantity']) * intval($product['price']);
+            }
 
-    public function getCartTotal()
-    {
-        $total = $this->db->getCartTotal(session_id());
-        return "
-            <tr>
+            $rows .= "<td>{$total}</td>";
+            $rows .= "</tr>";
+
+            $netSum = $netSum + $total;
+        }
+
+        $rows .= "<tr>
                 <td colspan='3'>Total Cost:</td>
-                <td>{$total}</td>
+                <td>{$netSum}</td>
             </tr>";
+        return $rows;
     }
 
     public function getCartTable()
@@ -133,8 +139,7 @@ class LIB_project1
                     </tr>
                 </thead>
                 <tbody>"
-            . $this->getProductsInCart()
-            . $this->getCartTotal() .
+            . $this->getProductsInCart() .
             "</tbody>
             </table>";
     }
@@ -143,7 +148,7 @@ class LIB_project1
     {
         return "
             <form method='post' onsubmit='return confirm(\"Are you sure you want to clear out the cart?\")'>
-                <input type='submit' name='clearCart' value='Empty Cart' />
+                <input type='submit' class='btn btn-warning' name='clearCart' value='Empty Cart' />
             </form>";
     }
 

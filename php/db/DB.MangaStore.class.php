@@ -107,7 +107,7 @@ class dbMangaStore
 
     public function getProductsInCart($sessionID)
     {
-        $query = "select c.quantity as quantity, p.productName as title, p.price as price, p.description as description,
+        $query = "select c.quantity as quantity, p.productName as title, p.price as price, p.description as description, p.salePrice as salePrice,
  p.imageName as imageName from carts c INNER join products p on c.productID = p.productID where sessionID = :sessionID";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
