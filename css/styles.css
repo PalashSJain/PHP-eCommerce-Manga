@@ -1,8 +1,31 @@
-.no-padding-on-right{
+.no-padding{
     padding-right: 0;
+    padding-left: 0;
 }
 
 .table td, .table th{
     vertical-align: middle;
     text-align: center;
+}
+
+.card {
+    background-color: white;
+    -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 8px 0 rgba(0, 0, 0, 0.20);
+    -moz-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 8px 0 rgba(0, 0, 0, 0.20);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 4px 8px 0 rgba(0, 0, 0, 0.20);
+}
+
+.navbar {
+    background-color: white;
+    -webkit-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2), 0 1px 30px 0 rgba(0, 0, 0, 0.19);
+    -moz-box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2), 0 1px 30px 0 rgba(0, 0, 0, 0.19);
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2), 0 1px 30px 0 rgba(0, 0, 0, 0.19);
+}
+
+.container-fluid {
+    padding: unset;
+}
+
+.row {
+    margin: unset;
 }

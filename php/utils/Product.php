@@ -63,7 +63,7 @@ class Product
         return
             "<div class='card'>
                 <div class='row'>
-                    <div class='col-md-5 no-padding-on-right'>
+                    <div class='col-md-5 no-padding'>
                         <img class='card-img-top' src='{$this->getImageName()}' alt='Card image'>
                     </div>
                     <div class='col-md-7 card-body'>

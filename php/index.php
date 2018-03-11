@@ -25,19 +25,23 @@ if (isset($_GET['page'])) {
 
 echo Navigation::header("Home");
 echo "
-<div class='py-5'>
-    <div>
-        <h3>SALE!</h3>"
-    . $util->getProductsOnSale() .
-    "</div>
+<div class='container-fluid'>
+<div class='row'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10'>
+        <div class='py-5'>
+                <h3>SALE!</h3>"
+            . $util->getProductsOnSale() .
+        "</div>
+             
+        <div>
+            <h3>Other Mangas in Catalog!</h3>"
+            . $util->getPagination($page)
+            . $util->getProductsOnCatalog($page)
+            . $util->getPagination($page)
+            . "</div>
     </div>
-     
-    <div>
-        <h3>Other Mangas in Catalog!</h3>"
-    . $util->getPagination($page)
-    . $util->getProductsOnCatalog($page)
-    . $util->getPagination($page)
-    . "</div>
+    <div class='col-md-1'></div>
 </div>";
 echo Navigation::footer();
 ?>

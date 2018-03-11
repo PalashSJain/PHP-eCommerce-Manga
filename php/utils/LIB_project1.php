@@ -95,7 +95,7 @@ class LIB_project1
             $rows .= "
                 <th scope='row'>
                     <div class='row'>
-                        <div class='col-md-3 no-padding-on-right'>
+                        <div class='col-md-3 no-padding'>
                             <img class='card-img-top' src='{$product['imageName']}' alt='Card image'>
                         </div>
                         <div class='col-md-9 card-body'>

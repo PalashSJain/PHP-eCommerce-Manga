@@ -43,8 +43,8 @@ HEAD;
     {
 //        $noOfProductsInCart = isset($_SESSION["ProductsInCart"]) ? "(".count($_SESSION["ProductsInCart"]).")" : "";
         return <<<NAV
-<div class='container'>
-<nav class="navbar navbar-expand-sm navbar-light bg-light">
+
+<nav class="navbar navbar-expand-sm navbar-light">
   <a class="navbar-brand" href="#">Manga Store</a>
   <div class="navbar-collapse" id="navbarSupportedContent">
     <ul class="navbar-nav ml-auto">
@@ -54,6 +54,7 @@ HEAD;
     </ul>
   </div>
 </nav>
+</div>
 NAV;
 
     }

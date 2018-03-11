@@ -22,13 +22,24 @@ if (isset($_POST['clearCart'])) {
 
 echo Navigation::header("Cart");
 
-if ($util->isCartEmpty()) {
-    echo $util->showEmptyCart();
-} else {
-    echo "
-<h1>Current cart contents</h1>"
-    . $util->getCartTable()
-    . $util->getBtnToClearCart();
-}
+echo "<div class='py-5'>";
+echo "
+<div class='container-fluid'>
+    <div class='row'>
+        <div class='col-md-1'></div>
+        <div class='col-md-10'>";
+        if ($util->isCartEmpty()) {
+            echo $util->showEmptyCart();
+        } else {
+            echo "
+            <h1>Current cart contents</h1>"
+                . $util->getCartTable()
+                . $util->getBtnToClearCart();
+        }
+echo    "</div>
+        <div class='col-md-1'></div>
+    </div>
+</div>";
+echo "</div>";
 echo Navigation::footer();
 ?>
