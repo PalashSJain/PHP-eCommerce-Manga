@@ -73,7 +73,7 @@ class Product
             . $this->getPriceToShow($this->getSalePrice(), $this->getPrice())
                     . "</p>
                     <form method='post'>
-                        <button type=\"submit\" class=\"btn btn-primary\" name='addToCart' value='{$this->productID}'>Add to cart</button>
+                        <button type=\"submit\" class=\"btn btn-success\" name='addToCart' value='{$this->productID}'>Add to cart</button>
                     </form>
                 </div>
                 </div>

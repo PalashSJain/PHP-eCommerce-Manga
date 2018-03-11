@@ -7,6 +7,7 @@
  */
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 
 class dbMangaStore
 {
@@ -36,9 +37,9 @@ class dbMangaStore
         return $products;
     }
 
-    public function getProductsOnCatalog()
+    public function getProductsOnCatalog($pageNumber)
     {
-        $query = "select * from products where salePrice = 0 limit 9";
+        $query = "select * from products where salePrice = 0 limit ".Constants::PAGE_SIZE." offset ". ($pageNumber * Constants::PAGE_SIZE);
         $stmt = $this->dbh->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
@@ -131,6 +132,14 @@ class dbMangaStore
         $stmt->execute(array(
             ':sessionID' => $sessionID
     ));
+    }
+
+    public function getNumberOfProductsInCatalog()
+    {
+        $query = "select count(*) as no_of_products from products where salePrice = 0";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute();
+        return intval($stmt->fetch()['no_of_products']);
     }
 
 }

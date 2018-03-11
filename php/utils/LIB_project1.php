@@ -6,6 +6,7 @@
  * Time: 10:12 PM
  */
 
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Sale.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Login.php";
@@ -37,9 +38,18 @@ class LIB_project1
         return $this->sale->makeProductsOnSale($products);
     }
 
-    public function getProductsOnCatalog()
+    public function getProductsOnCatalog($page)
     {
-        $products = $this->db->getProductsOnCatalog();
+        if ($page < 0) {
+            $page = 0;
+            header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
+            die();
+        } else if ($page > $this->db->getNumberOfProductsInCatalog() / Constants::PAGE_SIZE) {
+            $page = ($this->db->getNumberOfProductsInCatalog() / Constants::PAGE_SIZE) - 1;
+            header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
+            die();
+        }
+        $products = $this->db->getProductsOnCatalog($page);
         return $this->catalog->makeProductsOnCatalog($products);
     }
 
@@ -132,10 +142,9 @@ class LIB_project1
     public function getBtnToClearCart()
     {
         return "
-    <form method='post' onsubmit='return confirm(\"Are you sure you want to clear out the cart?\")'>
-        <input type='submit' name='clearCart' value='Empty Cart' />
-    </form>
-    ";
+            <form method='post' onsubmit='return confirm(\"Are you sure you want to clear out the cart?\")'>
+                <input type='submit' name='clearCart' value='Empty Cart' />
+            </form>";
     }
 
     public function clearCart()
@@ -146,9 +155,19 @@ class LIB_project1
     public function showEmptyCart()
     {
         return "
-<div class='jumbotron h-100'>
-  <h1>Your cart is empty!</h1> 
-  <p>Click <a href='/PHP-eCommerce-Manga/php/index.php'>here</a> to start shopping...</p> 
-</div>";
+            <div class='jumbotron h-100'>
+              <h1>Your cart is empty!</h1> 
+              <p>Click <a href='/PHP-eCommerce-Manga/php/index.php'>here</a> to start shopping...</p> 
+            </div>";
+    }
+
+    public function getPagination($page)
+    {
+        return "
+            <ul class='pagination justify-content-center'>
+              <li class='page-item'><a class='page-link' href='/PHP-eCommerce-Manga/php/index.php?page=" . ($page - 1) . "'>Previous</a></li>
+              <li class='page-item active'><a class='page-link'>$page</a></li>
+              <li class='page-item'><a class='page-link' href='/PHP-eCommerce-Manga/php/index.php?page=" . ($page + 1) . "'>Next</a></li>
+            </ul>";
     }
 }
