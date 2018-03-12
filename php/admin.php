@@ -22,13 +22,25 @@ if (isset($_POST['userID']) && isset($_POST['pwd']) && $util->isAdmin($_POST['us
     session_name("Admin");
     session_start();
     $_SESSION['isAdmin'] = true;
-    echo "Logged in.";
-}
-else {
+
+    echo "
+<div class='row py-5'>
+    <div class='col-md-1'></div>
+    <div class='col-md-10'>
+        <div class='row'>
+            <div class='col-md-6'><h3>Add new product!</h3>"
+                . $util->showAddProductForm() .
+            "</div>
+            <div class='col-md-6'><h3>Modify an existing product!</h3>"
+//                . $util->showAddProductForm()
+            . "</div>" .
+        "</div>" .
+        "</div>
+    <div class='col-md-1'></div>
+</div>";
+} else {
     echo $util->showAdminLoginPage();
 }
-
-echo $_SESSION["isAdmin"];
 
 echo Navigation::footer();
 ?>

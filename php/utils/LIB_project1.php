@@ -10,12 +10,13 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Sale.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Login.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/AddProduct.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
 class LIB_project1
 {
 
-    private $sale, $catalog, $login;
+    private $sale, $catalog, $login, $addProduct;
 
     private $db;
 
@@ -25,6 +26,7 @@ class LIB_project1
         $this->sale = new Sale();
         $this->catalog = new Catalog();
         $this->login = new Login();
+        $this->addProduct = new AddProduct();
     }
 
     function __destruct()
@@ -174,5 +176,25 @@ class LIB_project1
               <li class='page-item active'><a class='page-link'>$page</a></li>
               <li class='page-item'><a class='page-link' href='/PHP-eCommerce-Manga/php/index.php?page=" . ($page + 1) . "'>Next</a></li>
             </ul>";
+    }
+
+    public function getDropdownOfAllProducts()
+    {
+        return "
+<div class='dropdown'>
+  <button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
+    Dropdown button
+  </button>
+  <div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>
+    <a class='dropdown-item' href='#'>Action</a>
+    <a class='dropdown-item' href='#'>Another action</a>
+    <a class='dropdown-item' href='#'>Something else here</a>
+  </div>
+</div>";
+    }
+
+    public function showAddProductForm()
+    {
+        return $this->addProduct->getHTMLForm();
     }
 }
