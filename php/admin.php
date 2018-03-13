@@ -30,13 +30,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $price = FormValidator::parsePrice($_POST['price']);
     $salePrice = $validator->parseSalePrice($_POST['salePrice']);
 
-    /*
-     * {
-     *  'status' : true or false,
-     *  'data' : parsed,
-     *  'error' : ''
-     * }
-     */
     if ($name['status'] && $description['status'] && $quantity['status'] && $price['status'] && $salePrice['status']) {
         if ($salePrice['status']) {
             if ($salePrice['data'] !== 0) {
@@ -61,6 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
 if ($_SESSION['isAdmin']) {
     echo Navigation::header("Logout");
+
     echo "
 <div class='row py-5'>
    <div class='col-md-1'></div>
@@ -68,7 +62,6 @@ if ($_SESSION['isAdmin']) {
       <div class='row'>
          <div class='col-md-6'>
             <h3>Add new product!</h3>
-            <h4>$message</h4>
             <div class='card'>
                <form method='post' action=''>
                   <div class='form-group'>
@@ -131,6 +124,12 @@ if ($_SESSION['isAdmin']) {
    </div>
    <div class='col-md-1'></div>
 </div>";
+
+    if (isset($message) && !empty($message)) {
+        echo "<div id='snackbar'>$message</div>";
+        echo "<script type='text/javascript'> toast(); </script>";
+    }
+
 } else {
     echo Navigation::header("Login");
     header("Location: login.php");
