@@ -142,7 +142,8 @@ class dbMangaStore
         return intval($stmt->fetch()['no_of_products']);
     }
 
-    public function addProduct($name, $description, /*$file, */$quantity, $price, $salePrice)
+    public function addProduct($name, $description, /*$file, */
+                               $quantity, $price, $salePrice)
     {
         $query = "INSERT INTO products (productName, description, imageName, quantity, price, salePrice) 
             VALUES (:name, :description, :file, :quantity, :price, :salePrice)";
@@ -163,12 +164,20 @@ class dbMangaStore
         return "'$name' added successfully.";
     }
 
-    public function getProductsWithName($name)
+    public function getNumberOfProductsWithName($name)
     {
-        $query = "SELECT * FROM products WHERE productName = :name";
+        $query = "SELECT count(*) AS no_of_products FROM products WHERE productName = :name";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(':name' => $name));
-        return $stmt->fetchAll();
+        return $stmt->fetch()['no_of_products'];
+    }
+
+    public function getNumberOfProductsOnSale()
+    {
+        $query = "SELECT count(*) AS no_of_products FROM products WHERE salePrice != 0";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array());
+        return $stmt->fetch()['no_of_products'];
     }
 
 }

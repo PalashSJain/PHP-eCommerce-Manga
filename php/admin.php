@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $description = FormValidator::parseDescription($_POST['description']);
     $quantity = FormValidator::parseQuantity($_POST['quantity']);
     $price = FormValidator::parsePrice($_POST['price']);
-    $salePrice = FormValidator::parseSalePrice($_POST['salePrice']);
+    $salePrice = $validator->parseSalePrice($_POST['salePrice']);
 
     /*
      * {
@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
      *  'error' : ''
      * }
      */
-    if ($name['status'] && $description['status'] && $quantity['status'] && $price['status']) {
+    if ($name['status'] && $description['status'] && $quantity['status'] && $price['status'] && $salePrice['status']) {
         if ($salePrice['status']) {
             if ($salePrice['data'] !== 0) {
                 $salePrice['error'] = "Cannot add more Products on Sale";
@@ -73,13 +73,14 @@ if ($_SESSION['isAdmin']) {
                <form method='post' action=''>
                   <div class='form-group'>
                      <label for='name'>Name</label>
-                     <input type='text' class='form-control " . (isset($name)? $util->getErrorClass($name) : "") . "'
+                     <input type='text' class='form-control " . (isset($name) ? $util->getErrorClass($name) : "") . "'
                       id='name' name='name' placeholder='One Piece Vol. ?, Naruto Vol. ?' required>"
-        . (isset($name) ? $util->getErrorMessage($name) : "") .
-        "</div>
+                     . (isset($name) ? $util->getErrorMessage($name) : "") .
+                  "</div>
                   <div class='form-group'>
                      <label for='description'>Description</label>
                      <textarea class='form-control' id='description' name='description' rows='3' required></textarea>
+                     ". (isset($description) ? $util->getErrorMessage($description) : "") ."
                   </div>
                   <div class='form-group row'>
                      <label for='file' class='col-sm-4 col-form-label'>Manga Cover</label>
@@ -90,7 +91,9 @@ if ($_SESSION['isAdmin']) {
                   <div class='form-group row'>
                      <label for='quantity' class='col-sm-4 col-form-label'>Quantity</label>
                      <div class='col-sm-8 input-group mb-2'>
-                        <input type='number' class='form-control' id='quantity' name='quantity' placeholder='Quantity' required>
+                        <input type='number' class='form-control " . (isset($quantity) ? $util->getErrorClass($quantity) : "") . "' 
+                        id='quantity' name='quantity' placeholder='Quantity' required>
+                        ". (isset($quantity) ? $util->getErrorMessage($quantity) : "") ."
                      </div>
                   </div>
                   <div class='form-group row'>
@@ -99,7 +102,9 @@ if ($_SESSION['isAdmin']) {
                         <div class='input-group-prepend'>
                            <div class='input-group-text'>$</div>
                         </div>
-                        <input type='number' class='form-control' id='price' name='price' placeholder='Price' required>
+                        <input type='number' class='form-control " . (isset($price) ? $util->getErrorClass($price) : "") . "' 
+                        id='price' name='price' placeholder='Price' required>
+                        ". (isset($price) ? $util->getErrorMessage($price) : "") ."
                      </div>
                   </div>
                   <div class='form-group row'>
@@ -108,7 +113,9 @@ if ($_SESSION['isAdmin']) {
                         <div class='input-group-prepend'>
                            <div class='input-group-text'>$</div>
                         </div>
-                        <input type='number' class='form-control' id='salePrice' name='salePrice' placeholder='Sale Price'>
+                        <input type='number' class='form-control " . (isset($salePrice) ? $util->getErrorClass($salePrice) : "") . "' 
+                        id='salePrice' name='salePrice' placeholder='Sale Price'>
+                        ". (isset($salePrice) ? $util->getErrorMessage($salePrice) : "") ."
                      </div>
                   </div>
                   <button type='reset' class='btn btn-warning'>Reset</button>

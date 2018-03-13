@@ -20,11 +20,11 @@ class DBValidator
 
     public function canSaleMoreProducts()
     {
-        return false;
+        return $this->db->getNumberOfProductsOnSale() <= 5;
     }
 
     public function hasProductsWithName($name)
     {
-        return count($this->db->getProductsWithName($name)) > 0;
+        return $this->db->getNumberOfProductsWithName($name) > 0;
     }
 }
