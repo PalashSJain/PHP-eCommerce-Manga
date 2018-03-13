@@ -24,11 +24,11 @@ $name = null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    $name = $validator->parseName($_POST['name']);
-    $description = FormValidator::parseDescription($_POST['description']);
-    $quantity = FormValidator::parseQuantity($_POST['quantity']);
-    $price = FormValidator::parsePrice($_POST['price']);
-    $salePrice = $validator->parseSalePrice($_POST['salePrice']);
+    $name = $validator->parseName($_POST['Name']);
+    $description = FormValidator::parseDescription($_POST['Description']);
+    $quantity = FormValidator::parseQuantity($_POST['Quantity']);
+    $price = FormValidator::parsePrice($_POST['Price']);
+    $salePrice = $validator->parseSalePrice($_POST['Sale_Price']);
 
     if ($name['status'] && $description['status'] && $quantity['status'] && $price['status'] && $salePrice['status']) {
         if ($salePrice['status']) {
@@ -63,56 +63,15 @@ if ($_SESSION['isAdmin']) {
          <div class='col-md-6'>
             <h3>Add new product!</h3>
             <div class='card'>
-               <form method='post' action=''>
-                  <div class='form-group'>
-                     <label for='name'>Name</label>
-                     <input type='text' class='form-control " . (isset($name) ? $util->getErrorClass($name) : "") . "'
-                      id='name' name='name' placeholder='One Piece Vol. ?, Naruto Vol. ?' required>"
-                     . (isset($name) ? $util->getErrorMessage($name) : "") .
-                  "</div>
-                  <div class='form-group'>
-                     <label for='description'>Description</label>
-                     <textarea class='form-control' id='description' name='description' rows='3' required></textarea>
-                     ". (isset($description) ? $util->getErrorMessage($description) : "") ."
-                  </div>
-                  <div class='form-group row'>
-                     <label for='file' class='col-sm-4 col-form-label'>Manga Cover</label>
-                     <div class='col-sm-8'>
-                        <input type='file' class='form-control-file' id='file' name='file'>
-                     </div>
-                  </div>
-                  <div class='form-group row'>
-                     <label for='quantity' class='col-sm-4 col-form-label'>Quantity</label>
-                     <div class='col-sm-8 input-group mb-2'>
-                        <input type='number' class='form-control " . (isset($quantity) ? $util->getErrorClass($quantity) : "") . "' 
-                        id='quantity' name='quantity' placeholder='Quantity' required>
-                        ". (isset($quantity) ? $util->getErrorMessage($quantity) : "") ."
-                     </div>
-                  </div>
-                  <div class='form-group row'>
-                     <label for='price' class='col-sm-4 col-form-label'>Price</label>
-                     <div class='col-sm-8 input-group mb-2'>
-                        <div class='input-group-prepend'>
-                           <div class='input-group-text'>$</div>
-                        </div>
-                        <input type='number' class='form-control " . (isset($price) ? $util->getErrorClass($price) : "") . "' 
-                        id='price' name='price' placeholder='Price' required>
-                        ". (isset($price) ? $util->getErrorMessage($price) : "") ."
-                     </div>
-                  </div>
-                  <div class='form-group row'>
-                     <label for='salePrice' class='col-sm-4 col-form-label'>Sale Price</label>
-                     <div class='col-sm-8 input-group mb-2'>
-                        <div class='input-group-prepend'>
-                           <div class='input-group-text'>$</div>
-                        </div>
-                        <input type='number' class='form-control " . (isset($salePrice) ? $util->getErrorClass($salePrice) : "") . "' 
-                        id='salePrice' name='salePrice' placeholder='Sale Price'>
-                        ". (isset($salePrice) ? $util->getErrorMessage($salePrice) : "") ."
-                     </div>
-                  </div>
-                  <button type='reset' class='btn btn-warning'>Reset</button>
-                  <button type='submit' class='btn btn-success'>Submit</button>
+               <form method='post' action=''>"
+        . $util->showInputFieldVertically("Name", "text", (isset($name) ? $util->getErrorClass($name) : ""), (isset($name) ? $util->getErrorMessage($name) : ""))
+        . $util->showTextFieldVertically("Description", (isset($description) ? $util->getErrorClass($description) : ""), (isset($description) ? $util->getErrorMessage($description) : ""))
+        . $util->showInputFieldAsRow("Image", "file", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""))
+        . $util->showInputFieldAsRow("Quantity", "number", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""))
+        . $util->showInputFieldAsRow("Price", "number", (isset($price) ? $util->getErrorClass($price) : ""), (isset($price) ? $util->getErrorMessage($price) : ""), "$")
+        . $util->showInputFieldAsRow("Sale Price", "number", (isset($salePrice) ? $util->getErrorClass($salePrice) : ""), (isset($salePrice) ? $util->getErrorMessage($salePrice) : ""), "$")
+        . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
+                  <button type='submit' class='btn btn-success col-form-label'>Submit</button>
                </form>
             </div>
          </div>

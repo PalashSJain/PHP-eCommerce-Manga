@@ -226,8 +226,24 @@ class LIB_project1
         return "";
     }
 
-    public function addProduct($name, $description, /*$file, */$quantity, $price, $salePrice){
-        return $this->db->addProduct($name, $description, /*$file, */$quantity, $price, $salePrice);
+    public function addProduct($name, $description, /*$file, */
+                               $quantity, $price, $salePrice)
+    {
+        return $this->db->addProduct($name, $description, /*$file, */
+            $quantity, $price, $salePrice);
+    }
+
+    public function showInputFieldAsRow($field, $type, $errorClass, $errorMessage, $prepend = '')
+    {
+        return "<div class='form-group row'>
+                     <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
+                     <div class='col-sm-8 input-group mb-2'>"
+            . ((isset($prepend) && empty($prepend)) ? "" : "<div class='input-group-prepend'> <div class='input-group-text'>$prepend</div></div>")
+            . "<input type='$type' class='form-control $errorClass' 
+                        id='salePrice' name='$field' placeholder='$field'>
+                        $errorMessage
+                     </div>
+                  </div>";
     }
 
     public function getErrorMessage($name)
@@ -239,5 +255,28 @@ class LIB_project1
     public function getErrorClass($name)
     {
         return $name['status'] ? "" : "is-invalid";
+    }
+
+    public function showInputFieldVertically($field, $type, $errorClass, $errorMessage)
+    {
+        return "<div class='form-group'>
+                     <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
+                     <div class='col-sm-8 input-group mb-2'>
+                        <input type='$type' class='form-control $errorClass' 
+                        id='salePrice' name='$field' placeholder='$field'>
+                        $errorMessage
+                     </div>
+                  </div>";
+    }
+
+    public function showTextFieldVertically($field, $errorClass, $errorMessage)
+    {
+        return "<div class='form-group'>
+                     <label for='description' class='col-sm-4 col-form-label'>$field</label>
+                     <div class='col-sm-8 input-group mb-2'>
+                        <textarea class='form-control $errorClass' id='description' name='$field' rows='3' required></textarea>
+                        $errorMessage
+                     </div>
+                  </div>";
     }
 }
