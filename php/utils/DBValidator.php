@@ -6,11 +6,25 @@
  * Time: 5:28 PM
  */
 
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
+
 class DBValidator
 {
 
-    public static function canSaleMoreProducts()
+    private $db;
+
+    public function __construct()
     {
-        return true;
+        $this->db = new dbMangaStore();
+    }
+
+    public function canSaleMoreProducts()
+    {
+        return false;
+    }
+
+    public function hasProductsWithName($name)
+    {
+        return count($this->db->getProductsWithName($name)) > 0;
     }
 }

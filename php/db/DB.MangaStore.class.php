@@ -147,15 +147,28 @@ class dbMangaStore
         $query = "INSERT INTO products (productName, description, imageName, quantity, price, salePrice) 
             VALUES (:name, :description, :file, :quantity, :price, :salePrice)";
         $stmt = $this->dbh->prepare($query);
-        // TODO
-        $stmt->execute(array(
-            ':name'=> $name,
-            ':description' => $description,
-            ':file'=> 'https://images.sftcdn.net/images/t_optimized,f_auto/p/ce2ece60-9b32-11e6-95ab-00163ed833e7/260663710/the-test-fun-for-friends-screenshot.jpg',
-            ':quantity' => $quantity,
-            ':price' => $price,
-            'salePrice' => $salePrice
-        ));
+        try {
+            $stmt->execute(array(
+                ':name' => $name,
+                ':description' => $description,
+                ':file' => 'https://images.sftcdn.net/images/t_optimized,f_auto/p/ce2ece60-9b32-11e6-95ab-00163ed833e7/260663710/the-test-fun-for-friends-screenshot.jpg',
+                ':quantity' => $quantity,
+                ':price' => $price,
+                'salePrice' => $salePrice
+            ));
+        } catch (Exception $e) {
+            echo $e->getMessage();
+            return "Failed to add '$name'.";
+        }
+        return "'$name' added successfully.";
+    }
+
+    public function getProductsWithName($name)
+    {
+        $query = "SELECT * FROM products WHERE productName = :name";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(':name' => $name));
+        return $stmt->fetchAll();
     }
 
 }

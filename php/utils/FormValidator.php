@@ -6,36 +6,86 @@
  * Time: 5:28 PM
  */
 
-class FormValidator
+include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/DBValidator.php";
+
+class FormValidator extends DBValidator
 {
 
-    public static function isName($name)
+    public function parseName($input)
     {
-        return true;
+        $input = FormValidator::sanitize($input);
+        $data = array();
+        $data['status'] = !empty($input) && !$this->hasProductsWithName($input);
+        $data['data'] = $input;
+        $data['error'] = "";
+        if (!$data['status']) {
+            if (empty($input)) {
+                $data['error'] = "Product name is blank.";
+            } else {
+                $data['error'] = "Product name '$input' already exists.";
+            }
+        }
+        return $data;
     }
 
-    public static function isDescription($description)
+    public static function parseDescription($input)
     {
-        return true;
+        $input = FormValidator::sanitize($input);
+        $data = array();
+        $data['status'] = !empty($input);
+        $data['data'] = $input;
+        $data['error'] = "";
+        return $data;
     }
 
-    public static function isImageFile($file)
+    public static function isImageFile($input)
     {
-        return true;
+        $data = array();
+        $data['status'] = true;
+        $data['data'] = $input;
+        $data['error'] = "";
+        return $data;
     }
 
-    public static function validateQuantity($quantity)
+    public static function parseQuantity($input)
     {
-        return true;
+        $input = FormValidator::sanitize($input);
+        $data = array();
+        $input = intval($input);
+        $data['status'] = !empty($input) && $input > 0;
+        $data['data'] = $input;
+        $data['error'] = "";
+        return $data;
     }
 
-    public static function validatePrice($price)
+    public static function parsePrice($input)
     {
-        return true;
+        $input = FormValidator::sanitize($input);
+        $data = array();
+        $input = intval($input);
+        $data['status'] = !empty($input) && $input > 0;
+        $data['data'] = $input;
+        $data['error'] = "";
+        return $data;
     }
 
-    public static function validateSalePrice($salePrice)
+    public static function parseSalePrice($input)
     {
-        return true;
+        $input = FormValidator::sanitize($input);
+        $data = array();
+        $input = intval($input);
+        $data['status'] = !empty($input) && $input > 0;
+        $data['data'] = $input;
+        $data['error'] = "";
+        return $data;
+    }
+
+    private static function sanitize($var)
+    {
+        $var = trim($var);
+        $var = stripslashes($var);
+        $var = htmlentities($var);
+        $var = strip_tags($var);
+        return $var;
     }
 }
