@@ -50,7 +50,7 @@ HEAD;
       <li class='nav-item '.($currentPage == 'Home' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/index.php'>Home</a></li>
       <li class='nav-item '.($currentPage == 'Cart' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/cart.php'>Cart</a></li>
       <li class='nav-item '.($currentPage == 'Admin' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/admin.php'>Admin</a></li>"
-    . ($_SESSION['isAdmin'] ?
+    . (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] ?
                 "<li class='nav-item '.($currentPage == 'Admin' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/logout.php'>Logout</a></li>"
                 : "")
 . "</ul>
