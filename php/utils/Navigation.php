@@ -10,6 +10,7 @@
  * @param $currentPage : Can be either "Home", "Cart", "Admin". Helps set class active on header links
  * @return string: HTML UI element of the Header Navigation System
  */
+
 class Navigation
 {
     static function header($currentPage)
@@ -41,22 +42,20 @@ HEAD;
 
     private static function getNavbar($currentPage)
     {
-//        $noOfProductsInCart = isset($_SESSION["ProductsInCart"]) ? "(".count($_SESSION["ProductsInCart"]).")" : "";
-        return <<<NAV
-
-<nav class="navbar navbar-expand-sm navbar-light">
-  <a class="navbar-brand" href="#">Manga Store</a>
-  <div class="navbar-collapse" id="navbarSupportedContent">
-    <ul class="navbar-nav ml-auto">
-      <li class="nav-item ".($currentPage == "Home" ? "active" : "").""><a class="nav-link" href="/PHP-eCommerce-Manga/php/index.php">Home</a></li>
-      <li class="nav-item ".($currentPage == "Cart" ? "active" : "").""><a class="nav-link" href="/PHP-eCommerce-Manga/php/cart.php">Cart</a></li>
-      <li class="nav-item ".($currentPage == "Admin" ? "active" : "").""><a class="nav-link" href="/PHP-eCommerce-Manga/php/admin.php">Admin</a></li>
-    </ul>
+        return "
+<nav class='navbar navbar-expand-sm navbar-light'>
+  <a class='navbar-brand' href='#'>Manga Store</a>
+  <div class='navbar-collapse' id='navbarSupportedContent'>
+    <ul class='navbar-nav ml-auto'>
+      <li class='nav-item '.($currentPage == 'Home' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/index.php'>Home</a></li>
+      <li class='nav-item '.($currentPage == 'Cart' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/cart.php'>Cart</a></li>
+      <li class='nav-item '.($currentPage == 'Admin' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/admin.php'>Admin</a></li>"
+    . ($_SESSION['isAdmin'] ?
+                "<li class='nav-item '.($currentPage == 'Admin' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/logout.php'>Logout</a></li>"
+                : "")
+. "</ul>
   </div>
 </nav>
-</div>
-NAV;
-
+</div>";
     }
-
 }

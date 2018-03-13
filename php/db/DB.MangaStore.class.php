@@ -27,7 +27,7 @@ class dbMangaStore
 
     public function getProductsOnSale()
     {
-        $query = "select * from products where salePrice != 0";
+        $query = "SELECT * FROM products WHERE salePrice != 0";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
@@ -39,7 +39,7 @@ class dbMangaStore
 
     public function getProductsOnCatalog($pageNumber)
     {
-        $query = "select * from products where salePrice = 0 limit ".Constants::PAGE_SIZE." offset ". ($pageNumber * Constants::PAGE_SIZE);
+        $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT " . Constants::PAGE_SIZE . " OFFSET " . ($pageNumber * Constants::PAGE_SIZE);
         $stmt = $this->dbh->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
@@ -51,7 +51,7 @@ class dbMangaStore
 
     public function insert($title, $description, $price, $quantity, $imageName, $salePrice)
     {
-        $query = "insert into 
+        $query = "INSERT INTO 
                     products (productName, description, price, quantity, imageName, salePrice) 
                     VALUES (:title, :description, :price, :quantity, :imageName, :salePrice)";
         $stmt = $this->dbh->prepare($query);
@@ -66,7 +66,7 @@ class dbMangaStore
 
     public function isAdmin($userID, $pwd)
     {
-        $query = "select count(*) as no_of_users from users where UserID = :userID and Password = :pwd";
+        $query = "SELECT count(*) AS no_of_users FROM users WHERE UserID = :userID AND Password = :pwd";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':userID' => $userID,
@@ -77,7 +77,7 @@ class dbMangaStore
 
     public function addToCart($productId, $sid)
     {
-        $query = "insert into carts (sessionID, productID) values (:sessionID, :productID)";
+        $query = "INSERT INTO carts (sessionID, productID) VALUES (:sessionID, :productID)";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sid,
@@ -87,7 +87,7 @@ class dbMangaStore
 
     public function replaceCartWithNewSessionID($oldID, $newID)
     {
-        $query = "update carts set sessionID = :newID where sessionID = :oldID";
+        $query = "UPDATE carts SET sessionID = :newID WHERE sessionID = :oldID";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':newID' => $newID,
@@ -97,7 +97,7 @@ class dbMangaStore
 
     public function getNumberOfProductsInCart($sessionID)
     {
-        $query = "select count(*) as no_of_products from carts where sessionID = :sessionID";
+        $query = "SELECT count(*) AS no_of_products FROM carts WHERE sessionID = :sessionID";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID));
@@ -107,8 +107,8 @@ class dbMangaStore
 
     public function getProductsInCart($sessionID)
     {
-        $query = "select c.quantity as quantity, p.productName as title, p.price as price, p.description as description, p.salePrice as salePrice,
- p.imageName as imageName from carts c INNER join products p on c.productID = p.productID where sessionID = :sessionID";
+        $query = "SELECT c.quantity AS quantity, p.productName AS title, p.price AS price, p.description AS description, p.salePrice AS salePrice,
+ p.imageName AS imageName FROM carts c INNER JOIN products p ON c.productID = p.productID WHERE sessionID = :sessionID";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID));
@@ -117,7 +117,7 @@ class dbMangaStore
 
     public function getCartTotal($sessionID)
     {
-        $query = "select sum(p.price) as total from carts c inner join products p on c.productID = p.productID where c.sessionID = :sessionID";
+        $query = "SELECT sum(p.price) AS total FROM carts c INNER JOIN products p ON c.productID = p.productID WHERE c.sessionID = :sessionID";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID));
@@ -127,19 +127,35 @@ class dbMangaStore
 
     public function clearCart($sessionID)
     {
-        $query = "delete from carts where sessionID = :sessionID";
+        $query = "DELETE FROM carts WHERE sessionID = :sessionID";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID
-    ));
+        ));
     }
 
     public function getNumberOfProductsInCatalog()
     {
-        $query = "select count(*) as no_of_products from products where salePrice = 0";
+        $query = "SELECT count(*) AS no_of_products FROM products WHERE salePrice = 0";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute();
         return intval($stmt->fetch()['no_of_products']);
+    }
+
+    public function addProduct($name, $description, /*$file, */$quantity, $price, $salePrice)
+    {
+        $query = "INSERT INTO products (productName, description, imageName, quantity, price, salePrice) 
+            VALUES (:name, :description, :file, :quantity, :price, :salePrice)";
+        $stmt = $this->dbh->prepare($query);
+        // TODO
+        $stmt->execute(array(
+            ':name'=> $name,
+            ':description' => $description,
+            ':file'=> 'https://images.sftcdn.net/images/t_optimized,f_auto/p/ce2ece60-9b32-11e6-95ab-00163ed833e7/260663710/the-test-fun-for-friends-screenshot.jpg',
+            ':quantity' => $quantity,
+            ':price' => $price,
+            'salePrice' => $salePrice
+        ));
     }
 
 }

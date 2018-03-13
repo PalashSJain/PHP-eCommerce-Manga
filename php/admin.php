@@ -14,15 +14,9 @@ include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
 
 $util = new LIB_project1();
 $util->onLoad();
-echo Navigation::header("Admin");
+echo Navigation::header("Logout");
 
-if (isset($_POST['userID']) && isset($_POST['pwd']) && $util->isAdmin($_POST['userID'], $_POST['pwd'])) {
-    session_unset();
-    session_destroy();
-    session_name("Admin");
-    session_start();
-    $_SESSION['isAdmin'] = true;
-
+if ($_SESSION['isAdmin']) {
     echo "
 <div class='row py-5'>
     <div class='col-md-1'></div>
@@ -39,7 +33,8 @@ if (isset($_POST['userID']) && isset($_POST['pwd']) && $util->isAdmin($_POST['us
     <div class='col-md-1'></div>
 </div>";
 } else {
-    echo $util->showAdminLoginPage();
+    header("Location: login.php");
+    die();
 }
 
 echo Navigation::footer();
