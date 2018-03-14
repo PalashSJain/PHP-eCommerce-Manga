@@ -87,21 +87,23 @@ if ($_SESSION['isAdmin']) {
             <div class='card'>
                 <form action='' method='post'>
                     <select class='form-control' name='dropdownOptions' onchange='this.form.submit()'>
-                      ". $util->getProductOptions($option) ."
+                      " . $util->getProductOptions($option) . "
                     </select>
                 </form>    
-            
-                <form method='post' action=''>"
-        . $util->showInputFieldVertically("Name", "text", (isset($name) ? $util->getErrorClass($name) : ""), (isset($name) ? $util->getErrorMessage($name) : ""), $product->getProductName())
-        . $util->showTextFieldVertically("Description", (isset($description) ? $util->getErrorClass($description) : ""), (isset($description) ? $util->getErrorMessage($description) : ""), $product->getDescription())
-        . $util->showInputFieldAsRow("Image", "file", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""), '', $product->getImageName())
-        . $util->showInputFieldAsRow("Quantity", "number", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""), '', $product->getQuantity())
-        . $util->showInputFieldAsRow("Price", "number", (isset($price) ? $util->getErrorClass($price) : ""), (isset($price) ? $util->getErrorMessage($price) : ""), "$", $product->getPrice())
-        . $util->showInputFieldAsRow("Sale Price", "number", (isset($salePrice) ? $util->getErrorClass($salePrice) : ""), (isset($salePrice) ? $util->getErrorMessage($salePrice) : ""), "$", $product->getSalePrice())
-        . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
+            " . (
+        (isset($product) && !empty($product)) ?
+            "<form method='post' action=''>"
+            . $util->showInputFieldVertically("Name", "text", (isset($name) ? $util->getErrorClass($name) : ""), (isset($name) ? $util->getErrorMessage($name) : ""), $product->getProductName())
+            . $util->showTextFieldVertically("Description", (isset($description) ? $util->getErrorClass($description) : ""), (isset($description) ? $util->getErrorMessage($description) : ""), $product->getDescription())
+            . $util->showInputFieldAsRow("Image", "file", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""), '', $product->getImageName())
+            . $util->showInputFieldAsRow("Quantity", "number", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""), '', $product->getQuantity())
+            . $util->showInputFieldAsRow("Price", "number", (isset($price) ? $util->getErrorClass($price) : ""), (isset($price) ? $util->getErrorMessage($price) : ""), "$", $product->getPrice())
+            . $util->showInputFieldAsRow("Sale Price", "number", (isset($salePrice) ? $util->getErrorClass($salePrice) : ""), (isset($salePrice) ? $util->getErrorMessage($salePrice) : ""), "$", $product->getSalePrice())
+            . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
                     <button type='submit' class='btn btn-success col-form-label' name='submit' value='Update'>Update</button>
-                </form>
-            </div>
+                </form>"
+            : "")
+        . "</div>
         </div>
       </div>
    </div>
