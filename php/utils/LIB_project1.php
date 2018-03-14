@@ -57,6 +57,11 @@ class LIB_project1
         $this->db->addToCart($productId, $sid);
     }
 
+    public function reduceQuantity($productId)
+    {
+        $this->db->reduceQuantity($productId);
+    }
+
     public function showAdminLoginPage()
     {
         return $this->login->showLoginPage();
@@ -190,35 +195,6 @@ class LIB_project1
 </div>";
     }
 
-    public function getLoginForm()
-    {
-        return "
-<div class='container py-5'>
-    <div class='row'>
-                <div class='col-md-6 mx-auto'>
-                    <div class='card rounded-0'>
-                        <div class='card-header'>
-                            <h3 class='mb-0'>Admin Login</h3>
-                        </div>
-                        <div class='card-body'>
-                            <form class='form' role='form' autocomplete='off' novalidate='' method='POST' action=''>
-                                <div class='form-group'>
-                                    <label for='userID'>UserID</label>
-                                    <input type='text' class='form-control form-control-lg rounded-0' name='userID' id='userID' required>
-                                </div>
-                                <div class='form-group'>
-                                    <label for='pwd'>Password</label>
-                                    <input type='password' class='form-control form-control-lg rounded-0' id='pwd' name='pwd' required>
-                                </div>
-                                <input type='submit' class='btn btn-success btn-lg float-right' id='btnLogin' />
-                            </form>
-                        </div>
-                    </div>
-                </div>
-    </div>
-</div>";
-    }
-
     public function addProduct($name, $description, /*$file, */
                                $quantity, $price, $salePrice)
     {
@@ -295,4 +271,5 @@ class LIB_project1
     {
         return $this->db->updateProductInformation($oldProductName, $newName, $newDescription, $newQuantity, $newPrice, $newSalePrice);
     }
+
 }

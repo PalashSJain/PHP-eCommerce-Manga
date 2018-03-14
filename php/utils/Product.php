@@ -71,9 +71,12 @@ class Product
                     <p class='card-text'>{$this->getDescription()}</p>
                     <p class='card-text'>"
             . $this->getPriceToShow($this->getSalePrice(), $this->getPrice())
-                    . "</p>
+            . "</p>
+                    <p class='card-text'>Quantity left: 
+                    " . $this->getQuantity() . "
+                    </p>
                     <form method='post'>
-                        <button type=\"submit\" class=\"btn btn-success\" name='addToCart' value='{$this->productID}'>Add to cart</button>
+                        <button type='submit' class='btn btn-success' name='addToCart' value='{$this->productID}'>Add to cart</button>
                     </form>
                 </div>
                 </div>

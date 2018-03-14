@@ -77,12 +77,29 @@ class dbMangaStore
 
     public function addToCart($productId, $sid)
     {
-        $query = "INSERT INTO carts (sessionID, productID) VALUES (:sessionID, :productID)";
-        $stmt = $this->dbh->prepare($query);
+        $q = "SELECT quantity FROM carts WHERE productID = :productID AND sessionID = :sessionID";
+        $stmt = $this->dbh->prepare($q);
         $stmt->execute(array(
             ':sessionID' => $sid,
             ':productID' => $productId
         ));
+
+        if ($stmt->rowCount() > 0) {
+            $query = "UPDATE carts SET quantity = quantity + " . $stmt->fetchColumn(0) . " WHERE sessionID = :sessionID AND productID = :productID";
+            $stmt = $this->dbh->prepare($query);
+            $stmt->execute(array(
+                ':sessionID' => $sid,
+                ':productID' => $productId
+            ));
+        } else {
+            $query = "INSERT INTO carts (sessionID, productID) VALUES (:sessionID, :productID)";
+            $stmt = $this->dbh->prepare($query);
+            $stmt->execute(array(
+                ':sessionID' => $sid,
+                ':productID' => $productId
+            ));
+        }
+
     }
 
     public function replaceCartWithNewSessionID($oldID, $newID)
@@ -127,6 +144,16 @@ class dbMangaStore
 
     public function clearCart($sessionID)
     {
+        $products_in_cart = $this->getProductsInCart($sessionID);
+        foreach ($products_in_cart as $product) {
+            $q = "UPDATE products SET quantity = quantity + :quantity WHERE productName = :name";
+            $stmt = $this->dbh->prepare($q);
+            $stmt->execute(array(
+                ':quantity' => $product['quantity'],
+                ':name' => $product['title']
+            ));
+        }
+
         $query = "DELETE FROM carts WHERE sessionID = :sessionID";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
@@ -218,6 +245,16 @@ class dbMangaStore
         ));
 
         return $stmt->rowCount() > 0;
+    }
+
+    public function reduceQuantity($productId)
+    {
+        $query = "UPDATE products SET quantity = quantity - 1 WHERE productID = :productId";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':productId' => $productId
+        ));
+        return $stmt->rowCount() == 1;
     }
 
 }
