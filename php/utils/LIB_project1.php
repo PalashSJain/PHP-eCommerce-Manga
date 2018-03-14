@@ -254,8 +254,8 @@ class LIB_project1
     public function showInputFieldVertically($field, $type, $errorClass, $errorMessage, $value = '')
     {
         return "<div class='form-group'>
-                     <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
-                     <div class='col-sm-8 input-group mb-2'>
+                     <label for='salePrice' class='col-sm-12 col-form-label'>$field</label>
+                     <div class='col-sm-12 input-group mb-2'>
                         <input type='$type' class='form-control $errorClass' 
                         id='salePrice' name='$field' placeholder='$field' value='$value' required>
                         $errorMessage
@@ -266,9 +266,9 @@ class LIB_project1
     public function showTextFieldVertically($field, $errorClass, $errorMessage, $value = '')
     {
         return "<div class='form-group'>
-                     <label for='description' class='col-sm-4 col-form-label'>$field</label>
-                     <div class='col-sm-8 input-group mb-2'>
-                        <textarea class='form-control $errorClass' id='description' name='$field' rows='3' required>$value</textarea>
+                     <label for='description' class='col-sm-12 col-form-label'>$field</label>
+                     <div class='col-sm-12 input-group mb-2'>
+                        <textarea class='form-control $errorClass' id='description' name='$field' rows='3'>$value</textarea>
                         $errorMessage
                      </div>
                   </div>";
@@ -290,5 +290,10 @@ class LIB_project1
     public function getProductFromName($name)
     {
         return $this->db->getProductFromName($name);
+    }
+
+    public function updateProduct($oldProductName, $newName, $newDescription, $newQuantity, $newPrice, $newSalePrice)
+    {
+        return $this->db->updateProductInformation($oldProductName, $newName, $newDescription, $newQuantity, $newPrice, $newSalePrice);
     }
 }

@@ -15,7 +15,7 @@ class FormValidator extends DBValidator
     {
         $input = FormValidator::sanitize($input);
         $data = array();
-        $data['status'] = !empty($input) && !$this->hasProductsWithName($input);
+        $data['status'] = !empty($input);
         $data['data'] = $input;
         $data['error'] = "";
         if (!$data['status']) {
@@ -86,19 +86,21 @@ class FormValidator extends DBValidator
     public function parseSalePrice($input)
     {
         $input = FormValidator::sanitize($input);
+        $input = intval($input);
         if (empty($input)) $input = 0;
         $data = array();
-        $input = intval($input);
-        $data['status'] = (($input == 0) || ($input > 0 && $this->canSaleMoreProducts()));
+        $canSaleFewerProducts = $this->canSaleFewerProducts();
+        $canSaleMoreProducts = $this->canSaleMoreProducts();
+        $data['status'] = (($input == 0 && $canSaleFewerProducts) || ($input > 0 && $canSaleMoreProducts));
         $data['data'] = $input;
         $data['error'] = "";
         if (!$data['status']) {
-            if (empty($input)) {
-                $data['error'] = "Please specify a minimum sale price.";
-            } else if ($input < 0) {
-                $data['error'] = "Sale Price cannot be less than 0.";
+            if ($input == 0 && !$canSaleFewerProducts) {
+                $data['error'] = "Number of products on sale is less than 3.";
+            } else if ($input > 0 && !$canSaleMoreProducts) {
+                $data['error'] = "Number of products on sale is more than 5.";
             } else {
-                $data['error'] = "Cannot add more products on Sale.";
+                $data['error'] = "Sale Price cannot be negative.";
             }
         }
         return $data;

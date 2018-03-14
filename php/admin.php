@@ -23,7 +23,6 @@ $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-
     if (isset($_POST['submit']) && $_POST['submit'] == 'Submit') {
         $name = $validator->parseName($_POST['Name']);
         $description = FormValidator::parseDescription($_POST['Description']);
@@ -31,7 +30,31 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $price = FormValidator::parsePrice($_POST['Price']);
         $salePrice = $validator->parseSalePrice($_POST['Sale_Price']);
 
-        if ($name['status'] && $description['status'] && $quantity['status'] && $price['status'] && $salePrice['status']) {
+        if ($name['status'] && !$validator->hasProductsWithName($name['data']) && $description['status'] && $quantity['status'] && $price['status']) {
+            if ($salePrice['status']) {
+                if ($salePrice['data'] !== 0) {
+                    $salePrice['error'] = "Cannot add more Products on Sale";
+                } else {
+                    $salePrice['data'] = 0;
+                }
+                $message = $util->addProduct($name['data'],
+                    $description['data'],
+//                    $_POST['file'],
+                    $quantity['data'],
+                    $price['data'],
+                    $salePrice['data']);
+            } else {
+                $message = "Please verify the information you have entered.";
+            }
+        }
+    } else if (isset($_POST['submit']) && $_POST['submit'] == 'Update') {
+        $name = $validator->parseName($_POST['Name']);
+        $description = FormValidator::parseDescription($_POST['Description']);
+        $quantity = FormValidator::parseQuantity($_POST['Quantity']);
+        $price = FormValidator::parsePrice($_POST['Price']);
+        $salePrice = $validator->parseSalePrice($_POST['Sale_Price']);
+
+        if ($name['status'] && $description['status'] && $quantity['status'] && $price['status']) {
             if ($salePrice['status']) {
                 if ($salePrice['data'] !== 0) {
                     $salePrice['error'] = "Cannot add more Products on Sale";
@@ -39,30 +62,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             } else {
                 $salePrice['data'] = 0;
             }
-
-            $message = $util->addProduct($name['data'],
+            $product = $util->updateProduct($_SESSION['oldproduct']->getProductName(), $name['data'],
                 $description['data'],
 //                    $_POST['file'],
                 $quantity['data'],
                 $price['data'],
                 $salePrice['data']);
 
+            if (isset($product) && !empty($product)) {
+                $option = $product->getProductName();
+                $message = "Updated '" . $_SESSION['oldproduct']->getProductName() . "' with name '" . $product->getProductName() . "''!";
+                $_SESSION['oldproduct'] = $product;
+            } else {
+                $message = "Failed to update old product.";
+            }
         } else {
-            $message = "Invalid input data";
+            $message = "Please verify the information you have entered.";
         }
-    } else if (isset($_POST['submit']) && $_POST['submit'] == 'Update') {
-        $message = 'Updating!';
     } else if (isset($_POST['dropdownOptions'])) {
         $option = trim($_POST['dropdownOptions']);
         if ($option != Constants::DEFAULT_DROPDOWN_OPTION) {
             $product = $util->getProductFromName($option);
-            $message = 'Let me show you something new!';
+            $_SESSION['oldproduct'] = $product;
+            $message = "Showing information for product '" . $product->getProductName() . "'!";
         } else {
             $product = null;
         }
     }
 }
-
 
 if ($_SESSION['isAdmin']) {
     echo Navigation::header("Logout");

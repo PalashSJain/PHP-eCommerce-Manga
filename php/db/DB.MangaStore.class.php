@@ -203,6 +203,27 @@ class dbMangaStore
         return $product;
     }
 
+    public function updateProductInformation($oldProductName, $newName, $newDescription, $newQuantity, $newPrice, $newSalePrice)
+    {
+        $query = "UPDATE products SET productName = :newName, description = :newDescription, quantity = :newQuantity,
+              price = :newPrice, salePrice = :newSalePrice WHERE productName = :oldProductName";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':newName' => $newName,
+            ':newDescription' => $newDescription,
+            ':newQuantity' => $newQuantity,
+            ':newPrice' => $newPrice,
+            ':newSalePrice' => $newSalePrice,
+            ':oldProductName' => $oldProductName,
+        ));
+
+        if ($stmt->rowCount() > 0) {
+            return $this->getProductFromName($newName);
+        } else {
+            return null;
+        }
+    }
+
 }
 
 //$db = new dbMangaStore();
