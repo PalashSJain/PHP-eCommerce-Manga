@@ -180,14 +180,37 @@ class dbMangaStore
         return $stmt->fetch()['no_of_products'];
     }
 
+    public function getAllProducts()
+    {
+        $query = "SELECT * FROM products";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
+
+        $products = $stmt->fetchAll();
+
+        return $products;
+    }
+
+    public function getProductFromName($name)
+    {
+        $query = "SELECT * FROM products WHERE productName = :name";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(':name' => $name));
+        $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
+
+        $product = $stmt->fetch();
+        return $product;
+    }
+
 }
 
-//$db = new DB();
+//$db = new dbMangaStore();
 //$dom = new DOMDocument();
 //$dom->load("input.xml");
 //$articles = $dom->getElementsByTagName("article");
 //foreach ($articles as $article) {
-//    $title = $article->getElementsByTagName("h4")->item(0)->nodeValue;
+//    $title = trim($article->getElementsByTagName("h4")->item(0)->nodeValue);
 //    $description = "";
 //    $price = 15;
 //    $quantity = 1;

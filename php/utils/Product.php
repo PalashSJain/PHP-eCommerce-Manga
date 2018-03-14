@@ -15,7 +15,7 @@ class Product
      */
     public function getProductName(): string
     {
-        return $this->productName;
+        return trim($this->productName);
     }
 
     /**

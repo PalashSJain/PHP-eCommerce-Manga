@@ -220,12 +220,6 @@ class LIB_project1
 </div>";
     }
 
-    // TODO
-    public function showModifyProductForm()
-    {
-        return "";
-    }
-
     public function addProduct($name, $description, /*$file, */
                                $quantity, $price, $salePrice)
     {
@@ -233,14 +227,14 @@ class LIB_project1
             $quantity, $price, $salePrice);
     }
 
-    public function showInputFieldAsRow($field, $type, $errorClass, $errorMessage, $prepend = '')
+    public function showInputFieldAsRow($field, $type, $errorClass, $errorMessage, $prepend = '', $value='')
     {
         return "<div class='form-group row'>
                      <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
                      <div class='col-sm-8 input-group mb-2'>"
             . ((isset($prepend) && empty($prepend)) ? "" : "<div class='input-group-prepend'> <div class='input-group-text'>$prepend</div></div>")
             . "<input type='$type' class='form-control $errorClass' 
-                        id='salePrice' name='$field' placeholder='$field'>
+                        id='salePrice' name='$field' placeholder='$field' value='$value'>
                         $errorMessage
                      </div>
                   </div>";
@@ -257,26 +251,45 @@ class LIB_project1
         return $name['status'] ? "" : "is-invalid";
     }
 
-    public function showInputFieldVertically($field, $type, $errorClass, $errorMessage)
+    public function showInputFieldVertically($field, $type, $errorClass, $errorMessage, $value = '')
     {
         return "<div class='form-group'>
                      <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
                      <div class='col-sm-8 input-group mb-2'>
                         <input type='$type' class='form-control $errorClass' 
-                        id='salePrice' name='$field' placeholder='$field'>
+                        id='salePrice' name='$field' placeholder='$field' value='$value' required>
                         $errorMessage
                      </div>
                   </div>";
     }
 
-    public function showTextFieldVertically($field, $errorClass, $errorMessage)
+    public function showTextFieldVertically($field, $errorClass, $errorMessage, $value='')
     {
         return "<div class='form-group'>
                      <label for='description' class='col-sm-4 col-form-label'>$field</label>
                      <div class='col-sm-8 input-group mb-2'>
-                        <textarea class='form-control $errorClass' id='description' name='$field' rows='3' required></textarea>
+                        <textarea class='form-control $errorClass' id='description' name='$field' rows='3' required>$value</textarea>
                         $errorMessage
                      </div>
                   </div>";
+    }
+
+    public function getProductOptions($option)
+    {
+        $output = "";
+        $products = $this->db->getAllProducts();
+        foreach ($products as $product) {
+            if ($product->getProductName() == $option) {
+                $output .= "<option value='" . $product->getProductName() . "' selected>" . $product->getProductName() . "</option>";
+            }
+            else
+                $output .= "<option value='" . $product->getProductName() . "'>" . $product->getProductName() . "</option>";
+        }
+        return $output;
+    }
+
+    public function getProductFromName($name)
+    {
+        return $this->db->getProductFromName($name);
     }
 }
