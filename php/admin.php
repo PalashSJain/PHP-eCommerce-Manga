@@ -10,6 +10,7 @@
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
 include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/FormValidator.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 
 session_start();
 
@@ -53,8 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message = 'Updating!';
     } else if (isset($_POST['dropdownOptions'])) {
         $option = trim($_POST['dropdownOptions']);
-        $product = $util->getProductFromName($option);
-        $message = 'Let me show you something new!';
+        if ($option != Constants::DEFAULT_DROPDOWN_OPTION) {
+            $product = $util->getProductFromName($option);
+            $message = 'Let me show you something new!';
+        } else {
+            $product = null;
+        }
     }
 }
 

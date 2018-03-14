@@ -227,7 +227,7 @@ class LIB_project1
             $quantity, $price, $salePrice);
     }
 
-    public function showInputFieldAsRow($field, $type, $errorClass, $errorMessage, $prepend = '', $value='')
+    public function showInputFieldAsRow($field, $type, $errorClass, $errorMessage, $prepend = '', $value = '')
     {
         return "<div class='form-group row'>
                      <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
@@ -263,7 +263,7 @@ class LIB_project1
                   </div>";
     }
 
-    public function showTextFieldVertically($field, $errorClass, $errorMessage, $value='')
+    public function showTextFieldVertically($field, $errorClass, $errorMessage, $value = '')
     {
         return "<div class='form-group'>
                      <label for='description' class='col-sm-4 col-form-label'>$field</label>
@@ -276,13 +276,12 @@ class LIB_project1
 
     public function getProductOptions($option)
     {
-        $output = "";
+        $output = "<option value='" . Constants::DEFAULT_DROPDOWN_OPTION . "'>" . Constants::DEFAULT_DROPDOWN_OPTION . "</option>";
         $products = $this->db->getAllProducts();
         foreach ($products as $product) {
             if ($product->getProductName() == $option) {
                 $output .= "<option value='" . $product->getProductName() . "' selected>" . $product->getProductName() . "</option>";
-            }
-            else
+            } else
                 $output .= "<option value='" . $product->getProductName() . "'>" . $product->getProductName() . "</option>";
         }
         return $output;

@@ -8,4 +8,5 @@
 
 class Constants{
     const PAGE_SIZE = 9;
+    const DEFAULT_DROPDOWN_OPTION = "Please select a product from the dropdown.";
 }
