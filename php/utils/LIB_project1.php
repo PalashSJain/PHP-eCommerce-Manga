@@ -9,13 +9,12 @@
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Sale.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Login.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
 class LIB_project1
 {
 
-    private $sale, $catalog, $login;
+    private $sale, $catalog;
 
     private $db;
 
@@ -24,7 +23,6 @@ class LIB_project1
         $this->db = new dbMangaStore();
         $this->sale = new Sale();
         $this->catalog = new Catalog();
-        $this->login = new Login();
     }
 
     function __destruct()
@@ -252,7 +250,7 @@ class LIB_project1
         return $name['status'] ? "" : "is-invalid";
     }
 
-    public function showInputFieldVertically($field, $type, $errorClass, $errorMessage, $value = '')
+    public function showInputFieldVertically($field, $type, $errorClass="", $errorMessage="", $value = '')
     {
         return "<div class='form-group'>
                      <label for='salePrice' class='col-sm-12 col-form-label'>$field</label>

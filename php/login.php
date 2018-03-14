@@ -19,7 +19,7 @@ if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) {
 $util = new LIB_project1();
 $util->onLoad();
 
-if (isset($_POST['userID']) && isset($_POST['pwd']) && $util->isAdmin($_POST['userID'], $_POST['pwd'])) {
+if (isset($_POST['User_ID']) && isset($_POST['Password']) && $util->isAdmin($_POST['User_ID'], $_POST['Password'])) {
     session_unset();
     session_destroy();
     session_start();
@@ -30,5 +30,26 @@ if (isset($_POST['userID']) && isset($_POST['pwd']) && $util->isAdmin($_POST['us
 }
 
 echo Navigation::header("Admin");
-echo $util->getLoginForm();
+echo "<div class='container py-5'>
+    <div class='row'>
+        <div class='col-md-12'>
+            <div class='row'>
+                <div class='col-md-6 mx-auto'>
+                    <div class='card rounded-0'>
+                        <div class='card-header'>
+                            <h3 class='mb-0'>Admin Login</h3>
+                        </div>
+                        <div class='card-body'>
+                            <form class='form' role='form' autocomplete='off' id='adminLogin' novalidate='' method='POST' action=''>"
+                                . $util->showInputFieldVertically('User ID', 'text')
+                                . $util->showInputFieldVertically('Password', 'password')
+                                . "<button type='submit' class='btn btn-success btn-lg float-right' id='btnLogin'>Login</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>";
 echo Navigation::footer();
