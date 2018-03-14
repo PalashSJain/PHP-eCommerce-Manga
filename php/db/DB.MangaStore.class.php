@@ -78,14 +78,14 @@ class dbMangaStore
     public function addToCart($productId, $sid)
     {
         $q = "SELECT quantity FROM carts WHERE productID = :productID AND sessionID = :sessionID";
-        $stmt = $this->dbh->prepare($q);
-        $stmt->execute(array(
+        $stmt1 = $this->dbh->prepare($q);
+        $stmt1->execute(array(
             ':sessionID' => $sid,
             ':productID' => $productId
         ));
 
-        if ($stmt->rowCount() > 0) {
-            $query = "UPDATE carts SET quantity = quantity + " . $stmt->fetchColumn(0) . " WHERE sessionID = :sessionID AND productID = :productID";
+        if ($stmt1->rowCount() > 0) {
+            $query = "UPDATE carts SET quantity = quantity + 1 WHERE sessionID = :sessionID AND productID = :productID";
             $stmt = $this->dbh->prepare($query);
             $stmt->execute(array(
                 ':sessionID' => $sid,
@@ -144,15 +144,14 @@ class dbMangaStore
 
     public function clearCart($sessionID)
     {
-        $products_in_cart = $this->getProductsInCart($sessionID);
-        foreach ($products_in_cart as $product) {
-            $q = "UPDATE products SET quantity = quantity + :quantity WHERE productName = :name";
-            $stmt = $this->dbh->prepare($q);
-            $stmt->execute(array(
-                ':quantity' => $product['quantity'],
-                ':name' => $product['title']
-            ));
-        }
+        $query = "UPDATE products 
+            JOIN carts ON carts.productID = products.productID 
+            SET products.quantity = products.quantity + carts.quantity
+            WHERE carts.sessionID = :sessionID";
+        $stmt = $this->dbh->prepare($query);
+        $stmt->execute(array(
+            ':sessionID' => $sessionID
+        ));
 
         $query = "DELETE FROM carts WHERE sessionID = :sessionID";
         $stmt = $this->dbh->prepare($query);
