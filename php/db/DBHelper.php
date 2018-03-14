@@ -8,7 +8,7 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
-class DBValidator
+class DBHelper
 {
 
     private $db;
@@ -20,11 +20,11 @@ class DBValidator
 
     public function canSaleMoreProducts()
     {
-        return $this->db->getNumberOfProductsOnSale() <= 5;
+        return $this->db->getNumberOfProductsOnSale() < 5;
     }
 
     public function canSaleFewerProducts(){
-        return $this->db->getNumberOfProductsOnSale() >= 3;
+        return $this->db->getNumberOfProductsOnSale() > 3;
     }
 
     public function hasProductsWithName($name)

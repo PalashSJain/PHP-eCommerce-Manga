@@ -6,9 +6,9 @@
  * Time: 5:28 PM
  */
 
-include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/DBValidator.php";
+include $_SERVER['DOCUMENT_ROOT'] . "/php/db/DBHelper.php";
 
-class FormValidator extends DBValidator
+class FormValidator extends DBHelper
 {
 
     public function parseName($input)
@@ -32,7 +32,7 @@ class FormValidator extends DBValidator
     {
         $input = FormValidator::sanitize($input);
         $data = array();
-        $data['status'] = !empty($input);
+        $data['status'] = true;
         $data['data'] = $input;
         $data['error'] = "";
         return $data;
@@ -83,7 +83,7 @@ class FormValidator extends DBValidator
         return $data;
     }
 
-    public function parseSalePrice($input)
+    public function parseSalePrice($input, $isAlreadyOnSale=false)
     {
         $input = FormValidator::sanitize($input);
         $input = intval($input);
@@ -91,7 +91,7 @@ class FormValidator extends DBValidator
         $data = array();
         $canSaleFewerProducts = $this->canSaleFewerProducts();
         $canSaleMoreProducts = $this->canSaleMoreProducts();
-        $data['status'] = (($input == 0 && $canSaleFewerProducts) || ($input > 0 && $canSaleMoreProducts));
+        $data['status'] = ($input == 0 && $canSaleFewerProducts) || ($input > 0 && ($canSaleMoreProducts || $isAlreadyOnSale));
         $data['data'] = $input;
         $data['error'] = "";
         if (!$data['status']) {

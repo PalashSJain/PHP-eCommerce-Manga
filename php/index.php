@@ -18,7 +18,7 @@ if (isset($_POST['addToCart'])) {
     $util->addProductToCart($_POST['addToCart'], $_COOKIE['SID']);
 }
 
-$page = 0;
+$page = 1;
 if (isset($_GET['page'])) {
     $page = intval($_GET['page']);
 }

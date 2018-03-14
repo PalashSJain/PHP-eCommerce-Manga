@@ -39,7 +39,7 @@ class dbMangaStore
 
     public function getProductsOnCatalog($pageNumber)
     {
-        $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT " . Constants::PAGE_SIZE . " OFFSET " . ($pageNumber * Constants::PAGE_SIZE);
+        $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT " . Constants::PAGE_SIZE . " OFFSET " . (($pageNumber - 1) * Constants::PAGE_SIZE);
         $stmt = $this->dbh->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
@@ -61,7 +61,7 @@ class dbMangaStore
             ':quantity' => $quantity,
             ':imageName' => $imageName,
             ':salePrice' => $salePrice));
-        echo $stmt->rowCount();
+        echo $this->dbh->lastInsertId();
     }
 
     public function isAdmin($userID, $pwd)
@@ -217,11 +217,7 @@ class dbMangaStore
             ':oldProductName' => $oldProductName,
         ));
 
-        if ($stmt->rowCount() > 0) {
-            return $this->getProductFromName($newName);
-        } else {
-            return null;
-        }
+        return $stmt->rowCount() > 0;
     }
 
 }

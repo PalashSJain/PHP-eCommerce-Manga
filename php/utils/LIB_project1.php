@@ -40,12 +40,13 @@ class LIB_project1
 
     public function getProductsOnCatalog($page)
     {
-        if ($page < 0) {
-            $page = 0;
+        $no_of_products = $this->db->getNumberOfProductsInCatalog();
+        if ($page < 1) {
+            $page = 1;
             header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
             die();
-        } else if ($page > $this->db->getNumberOfProductsInCatalog() / Constants::PAGE_SIZE) {
-            $page = ($this->db->getNumberOfProductsInCatalog() / Constants::PAGE_SIZE) - 1;
+        } else if (($page * (Constants::PAGE_SIZE - 1)) > $no_of_products) {
+            $page = intval($no_of_products / (Constants::PAGE_SIZE - 1));
             header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
             die();
         }
@@ -160,7 +161,7 @@ class LIB_project1
     public function showEmptyCart()
     {
         return "
-            <div class='jumbotron h-100'>
+            <div class='jumbotron'>
               <h1>Your cart is empty!</h1> 
               <p>Click <a href='/PHP-eCommerce-Manga/php/index.php'>here</a> to start shopping...</p> 
             </div>";

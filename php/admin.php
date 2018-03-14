@@ -30,53 +30,53 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $price = FormValidator::parsePrice($_POST['Price']);
         $salePrice = $validator->parseSalePrice($_POST['Sale_Price']);
 
-        if ($name['status'] && !$validator->hasProductsWithName($name['data']) && $description['status'] && $quantity['status'] && $price['status']) {
-            if ($salePrice['status']) {
-                if ($salePrice['data'] !== 0) {
-                    $salePrice['error'] = "Cannot add more Products on Sale";
-                } else {
-                    $salePrice['data'] = 0;
-                }
-                $message = $util->addProduct($name['data'],
-                    $description['data'],
-//                    $_POST['file'],
-                    $quantity['data'],
-                    $price['data'],
-                    $salePrice['data']);
-            } else {
-                $message = "Please verify the information you have entered.";
-            }
-        }
-    } else if (isset($_POST['submit']) && $_POST['submit'] == 'Update') {
-        $name = $validator->parseName($_POST['Name']);
-        $description = FormValidator::parseDescription($_POST['Description']);
-        $quantity = FormValidator::parseQuantity($_POST['Quantity']);
-        $price = FormValidator::parsePrice($_POST['Price']);
-        $salePrice = $validator->parseSalePrice($_POST['Sale_Price']);
-
-        if ($name['status'] && $description['status'] && $quantity['status'] && $price['status']) {
-            if ($salePrice['status']) {
-                if ($salePrice['data'] !== 0) {
-                    $salePrice['error'] = "Cannot add more Products on Sale";
-                }
-            } else {
-                $salePrice['data'] = 0;
-            }
-            $product = $util->updateProduct($_SESSION['oldproduct']->getProductName(), $name['data'],
+        $hasProductWithSameName = $validator->hasProductsWithName($name['data']);
+        if ($name['status'] && !$hasProductWithSameName && $description['status'] && $quantity['status'] && $price['status'] && $salePrice['status']) {
+            $message = $util->addProduct($name['data'],
                 $description['data'],
 //                    $_POST['file'],
                 $quantity['data'],
                 $price['data'],
                 $salePrice['data']);
+        } else {
+            if ($hasProductWithSameName) {
+                $message = "Failed: Product with the same name already exists.";
+            } else if (!$salePrice['status']) {
+                if ($_POST['Sale_Price'] > 0) {
+                    $message = "Failed: Cannot put more products on sale!";
+                } else {
+                    $message = "Failed: Cannot put fewer products on sale!";
+                }
+            }
+        }
+    } else if (isset($_POST['submit']) && $_POST['submit'] == 'Update') {
+        $xname = $validator->parseName($_POST['Name']);
+        $xdescription = FormValidator::parseDescription($_POST['Description']);
+        $xquantity = FormValidator::parseQuantity($_POST['Quantity']);
+        $xprice = FormValidator::parsePrice($_POST['Price']);
+        $xsalePrice = $validator->parseSalePrice($_POST['Sale_Price'], $_SESSION['oldproduct']->getSalePrice() > 0);
 
-            if (isset($product) && !empty($product)) {
-                $option = $product->getProductName();
-                $message = "Updated '" . $_SESSION['oldproduct']->getProductName() . "' with name '" . $product->getProductName() . "''!";
-                $_SESSION['oldproduct'] = $product;
+        if ($xname['status'] && $xdescription['status'] && $xquantity['status'] && $xprice['status'] && $xsalePrice['status']) {
+
+            if ($util->updateProduct($_SESSION['oldproduct']->getProductName(),
+                $xname['data'],
+                $xdescription['data'],
+//                    $_POST['file'],
+                $xquantity['data'],
+                $xprice['data'],
+                $xsalePrice['data'])) {
+
+                $option = $xname['data'];
+                $message = "Updated '" . $xname['data'] . "'!";
+                $product = $util->getProductFromName($xname['data']);
             } else {
+                $option = $_SESSION['oldproduct']->getProductName();
                 $message = "Failed to update old product.";
+                $product = $_SESSION['oldproduct'];
             }
         } else {
+            $option = $_SESSION['oldproduct']->getProductName();
+            $product = $_SESSION['oldproduct'];
             $message = "Please verify the information you have entered.";
         }
     } else if (isset($_POST['dropdownOptions'])) {
@@ -84,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($option != Constants::DEFAULT_DROPDOWN_OPTION) {
             $product = $util->getProductFromName($option);
             $_SESSION['oldproduct'] = $product;
-            $message = "Showing information for product '" . $product->getProductName() . "'!";
+            $message = "Displaying information for product '" . $product->getProductName() . "'!";
         } else {
             $product = null;
         }
@@ -125,12 +125,12 @@ if ($_SESSION['isAdmin']) {
             " . (
         (isset($product) && !empty($product)) ?
             "<form method='post' action=''>"
-            . $util->showInputFieldVertically("Name", "text", (isset($name) ? $util->getErrorClass($name) : ""), (isset($name) ? $util->getErrorMessage($name) : ""), $product->getProductName())
-            . $util->showTextFieldVertically("Description", (isset($description) ? $util->getErrorClass($description) : ""), (isset($description) ? $util->getErrorMessage($description) : ""), $product->getDescription())
-            . $util->showInputFieldAsRow("Image", "file", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""), '', $product->getImageName())
-            . $util->showInputFieldAsRow("Quantity", "number", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""), '', $product->getQuantity())
-            . $util->showInputFieldAsRow("Price", "number", (isset($price) ? $util->getErrorClass($price) : ""), (isset($price) ? $util->getErrorMessage($price) : ""), "$", $product->getPrice())
-            . $util->showInputFieldAsRow("Sale Price", "number", (isset($salePrice) ? $util->getErrorClass($salePrice) : ""), (isset($salePrice) ? $util->getErrorMessage($salePrice) : ""), "$", $product->getSalePrice())
+            . $util->showInputFieldVertically("Name", "text", (isset($xname) ? $util->getErrorClass($xname) : ""), (isset($xname) ? $util->getErrorMessage($xname) : ""), $product->getProductName())
+            . $util->showTextFieldVertically("Description", (isset($xdescription) ? $util->getErrorClass($xdescription) : ""), (isset($xdescription) ? $util->getErrorMessage($xdescription) : ""), $product->getDescription())
+            . $util->showInputFieldAsRow("Image", "file", (isset($xquantity) ? $util->getErrorClass($xquantity) : ""), (isset($xquantity) ? $util->getErrorMessage($xquantity) : ""), '', $product->getImageName())
+            . $util->showInputFieldAsRow("Quantity", "number", (isset($xquantity) ? $util->getErrorClass($xquantity) : ""), (isset($xquantity) ? $util->getErrorMessage($xquantity) : ""), '', $product->getQuantity())
+            . $util->showInputFieldAsRow("Price", "number", (isset($xprice) ? $util->getErrorClass($xprice) : ""), (isset($xprice) ? $util->getErrorMessage($xprice) : ""), "$", $product->getPrice())
+            . $util->showInputFieldAsRow("Sale Price", "number", (isset($xsalePrice) ? $util->getErrorClass($xsalePrice) : ""), (isset($xsalePrice) ? $util->getErrorMessage($xsalePrice) : ""), "$", $product->getSalePrice())
             . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
                     <button type='submit' class='btn btn-success col-form-label' name='submit' value='Update'>Update</button>
                 </form>"
