@@ -36,7 +36,7 @@ echo "
                 <h3>SALE!</h3>"
             . $util->getProductsOnSale() .
         "</div>
-             
+             <hr>
         <div>
             <h3>Other Mangas in Catalog!</h3>"
             . $util->showPagination($page)
