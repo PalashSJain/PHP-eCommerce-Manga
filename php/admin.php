@@ -26,10 +26,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['submit']) && $_POST['submit'] == 'Submit') {
         $name = $validator->parseName($_POST['Name']);
-        $description = FormValidator::parseDescription($_POST['Description']);
+        $description = $validator->parseDescription($_POST['Description']);
         $image = $validator->isImage($_FILES['Image']);
-        $quantity = FormValidator::parseQuantity($_POST['Quantity']);
-        $price = FormValidator::parsePrice($_POST['Price']);
+        $quantity = $validator->parseQuantity($_POST['Quantity']);
+        $price = $validator->parsePrice($_POST['Price']);
         $salePrice = $validator->parseSalePrice($_POST['Sale_Price']);
 
         $hasProductWithSameName = $validator->hasProductsWithName($name['data']);
@@ -56,10 +56,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else if (isset($_POST['submit']) && $_POST['submit'] == 'Update') {
         $xname = $validator->parseName($_POST['Name']);
-        $xdescription = FormValidator::parseDescription($_POST['Description']);
+        $xdescription = $validator->parseDescription($_POST['Description']);
         $ximage = $validator->isImage($_FILES['Image']);
-        $xquantity = FormValidator::parseQuantity($_POST['Quantity']);
-        $xprice = FormValidator::parsePrice($_POST['Price']);
+        $xquantity = $validator->parseQuantity($_POST['Quantity']);
+        $xprice = $validator->parsePrice($_POST['Price']);
         $xsalePrice = $validator->parseSalePrice($_POST['Sale_Price'], $_SESSION['oldproduct']->getSalePrice() > 0);
 
         if ($xname['status'] && $xdescription['status'] && $xquantity['status'] &&

@@ -29,7 +29,7 @@ class FormValidator extends DBHelper
         return $data;
     }
 
-    public static function parseDescription($input)
+    public function parseDescription($input)
     {
         $input = FormValidator::sanitize($input);
         $data = array();
@@ -76,7 +76,7 @@ class FormValidator extends DBHelper
         return $data;
     }
 
-    public static function parseQuantity($input)
+    public function parseQuantity($input)
     {
         $input = FormValidator::sanitize($input);
         $data = array();
@@ -94,7 +94,7 @@ class FormValidator extends DBHelper
         return $data;
     }
 
-    public static function parsePrice($input)
+    public function parsePrice($input)
     {
         $input = FormValidator::sanitize($input);
         $data = array();
