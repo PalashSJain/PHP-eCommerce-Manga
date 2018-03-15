@@ -247,7 +247,7 @@ class dbMangaStore
             ':oldProductName' => $oldProductName,
         ));
 
-        return $stmt->rowCount() > 0;
+        return $stmt->rowCount();
     }
 
     public function reduceQuantity($productId)

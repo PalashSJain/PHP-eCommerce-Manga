@@ -104,7 +104,6 @@ class FormValidator extends DBHelper
             }
         }
 
-
         return $data;
     }
 
@@ -152,14 +151,14 @@ class FormValidator extends DBHelper
         $data = array();
         $canSaleFewerProducts = $this->canSaleFewerProducts();
         $canSaleMoreProducts = $this->canSaleMoreProducts();
-        $data['status'] = ($input == 0 && $canSaleFewerProducts) || ($input > 0 && ($canSaleMoreProducts || $isAlreadyOnSale));
+        $data['status'] = ($input == 0 && ($canSaleFewerProducts || !$isAlreadyOnSale)) || ($input > 0 && ($canSaleMoreProducts || $isAlreadyOnSale));
         $data['data'] = $input;
         $data['error'] = "";
         if (!$data['status']) {
             if ($input == 0 && !$canSaleFewerProducts) {
-                $data['error'] = "Number of products on sale is less than 3.";
+                $data['error'] = "Number of products on sale would become less than 3.";
             } else if ($input > 0 && !$canSaleMoreProducts) {
-                $data['error'] = "Number of products on sale is more than 5.";
+                $data['error'] = "Number of products on sale would become more than 5.";
             } else {
                 $data['error'] = "Sale Price cannot be negative.";
             }

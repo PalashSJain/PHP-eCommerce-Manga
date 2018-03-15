@@ -241,7 +241,6 @@ class LIB_project1
                          name='$field' placeholder='$field'>
                         $errorMessage
                      </div>
-                     <div class='col-sm-12'><small>A default image will be used if no image is provided.</small></div>
                   </div>";
     }
 

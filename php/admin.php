@@ -58,44 +58,59 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $xname = $validator->parseName($_POST['Name']);
         $xdescription = $validator->parseDescription($_POST['Description']);
         $ximage = $validator->isImage($_FILES['Image']);
+        if ($ximage['data'] == "http://" . $_SERVER['HTTP_HOST'] . "/PHP-eCommerce-Manga/images/default.png") {
+            $ximage['data'] = $_SESSION['oldproduct']->getImageName();
+        }
+
         $xquantity = $validator->parseQuantity($_POST['Quantity']);
         $xprice = $validator->parsePrice($_POST['Price']);
         $xsalePrice = $validator->parseSalePrice($_POST['Sale_Price'], $_SESSION['oldproduct']->getSalePrice() > 0);
 
-        if ($xname['status'] && $xdescription['status'] && $xquantity['status'] &&
+        $oldproduct = $_SESSION['oldproduct'];
+        if ($oldproduct->getProductName() == $xname['data'] &&
+            $oldproduct->getDescription() == $xdescription['data'] &&
+            $oldproduct->getImageName() == $ximage['data'] &&
+            $oldproduct->getQuantity() == $xquantity['data'] &&
+            $oldproduct->getPrice() == $xprice['data'] &&
+            $oldproduct->getSalePrice() == $xsalePrice['data']) {
+
+            $option = $xname['data'];
+            $message = "No change detected.";
+
+        } else if ($xname['status'] && $xdescription['status'] && $xquantity['status'] &&
             $ximage['status'] && $xprice['status'] && $xsalePrice['status']) {
 
-            if ($util->updateProduct($_SESSION['oldproduct']->getProductName(),
+            $rowsUpdated = $util->updateProduct($_SESSION['oldproduct']->getProductName(),
                 $xname['data'],
                 $xdescription['data'],
                 $ximage['data'],
                 $xquantity['data'],
                 $xprice['data'],
-                $xsalePrice['data'])) {
+                $xsalePrice['data']);
 
+            if ($rowsUpdated > 0) {
                 $option = $xname['data'];
-                $message = "Updated '" . $xname['data'] . "'!";
-                $product = $util->getProductFromName($xname['data']);
+                $message = "Updated '$option'!";
+                $_SESSION['oldproduct'] = $util->getProductFromName($option);
+
             } else {
                 $option = $_SESSION['oldproduct']->getProductName();
                 $message = "Failed to update old product.";
-                $product = $_SESSION['oldproduct'];
             }
+
         } else {
             $option = $_SESSION['oldproduct']->getProductName();
-            $product = $_SESSION['oldproduct'];
             $message = "Please verify the information you have entered.";
         }
     } else if (isset($_POST['dropdownOptions'])) {
         $option = trim($_POST['dropdownOptions']);
         if (!$util->isDefaultDropdownOption($option)) {
-            $product = $util->getProductFromName($option);
-            $_SESSION['oldproduct'] = $product;
-            $message = "Displaying information for product '" . $product->getProductName() . "'!";
-        } else {
-            $product = null;
+            $_SESSION['oldproduct'] = $util->getProductFromName($option);
+            $message = "Displaying information for product '$option'!";
         }
     }
+} else {
+    $_SESSION['oldproduct'] = null;
 }
 
 if ($_SESSION['isAdmin']) {
@@ -110,13 +125,14 @@ if ($_SESSION['isAdmin']) {
             <h3>Add new product!</h3>
             <div class='card'>
                <form method='post' action='' enctype='multipart/form-data'>"
-                . $util->showInputFieldVertically("Name", "text", $name)
-                . $util->showTextFieldVertically("Description", $description)
-                . $util->showFileFieldAsRow("Image", "file", $image)
-                . $util->showInputFieldAsRow("Quantity", "number", $quantity)
-                . $util->showInputFieldAsRow("Price", "number", $price, "$")
-                . $util->showInputFieldAsRow("Sale Price", "number", $salePrice, "$")
-                . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
+        . $util->showInputFieldVertically("Name", "text", $name)
+        . $util->showTextFieldVertically("Description", $description)
+        . $util->showFileFieldAsRow("Image", "file", $image)
+        . "<div class='col-sm-12'><small>Default image will be used if no image is provided.</small></div>"
+        . $util->showInputFieldAsRow("Quantity", "number", $quantity)
+        . $util->showInputFieldAsRow("Price", "number", $price, "$")
+        . $util->showInputFieldAsRow("Sale Price", "number", $salePrice, "$")
+        . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
                   <button type='submit' class='btn btn-success col-form-label' name='submit' value='Submit'>Submit</button>
                </form>
             </div>
@@ -130,15 +146,16 @@ if ($_SESSION['isAdmin']) {
                     </select>
                 </form>    
             " . (
-        (isset($product) && !empty($product)) ?
+        (isset($_SESSION['oldproduct']) && !empty($_SESSION['oldproduct'])) ?
             "<form method='post' action='' enctype='multipart/form-data'>"
-                    . $util->showInputFieldVertically("Name", "text", $xname, $product->getProductName())
-                    . $util->showTextFieldVertically("Description", $xdescription, $product->getDescription())
-                    . $util->showFileFieldAsRow("Image", "file", $ximage)
-                    . $util->showInputFieldAsRow("Quantity", "number", $xquantity, '', $product->getQuantity())
-                    . $util->showInputFieldAsRow("Price", "number", $xprice, "$", $product->getPrice())
-                    . $util->showInputFieldAsRow("Sale Price", "number", $xsalePrice, "$", $product->getSalePrice())
-                    . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
+            . $util->showInputFieldVertically("Name", "text", $xname, $_SESSION['oldproduct']->getProductName())
+            . $util->showTextFieldVertically("Description", $xdescription, $_SESSION['oldproduct']->getDescription())
+            . $util->showFileFieldAsRow("Image", "file", $ximage)
+            . "<div class='col-sm-12'><small>Original image will be used if no image is provided.</small></div>"
+            . $util->showInputFieldAsRow("Quantity", "number", $xquantity, '', $_SESSION['oldproduct']->getQuantity())
+            . $util->showInputFieldAsRow("Price", "number", $xprice, "$", $_SESSION['oldproduct']->getPrice())
+            . $util->showInputFieldAsRow("Sale Price", "number", $xsalePrice, "$", $_SESSION['oldproduct']->getSalePrice())
+            . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
                     <button type='submit' class='btn btn-success col-form-label' name='submit' value='Update'>Update</button>
                 </form>"
             : "")
