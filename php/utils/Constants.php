@@ -11,4 +11,7 @@ class Constants{
     const DEFAULT_DROPDOWN_OPTION = "Please select a product from the dropdown.";
     const IMAGE_EXTENSIONS = array("png", "jpeg", "jpg");
     const IMAGE_TYPES = array("image/jpeg");
+
+    // ROLE ID for Different types of users. Currently, only ADMIN is supported
+    const ROLE_ADMIN = 1;
 }

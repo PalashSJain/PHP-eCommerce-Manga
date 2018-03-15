@@ -9,12 +9,13 @@
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Sale.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DBHelper.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
 class LIB_project1
 {
 
-    private $sale, $catalog;
+    private $sale, $catalog, $dbhelper;
 
     private $db;
 
@@ -23,6 +24,7 @@ class LIB_project1
         $this->db = new dbMangaStore();
         $this->sale = new Sale();
         $this->catalog = new Catalog();
+        $this->dbhelper = new DBHelper();
     }
 
     function __destruct()
@@ -62,14 +64,9 @@ class LIB_project1
         $this->db->reduceQuantity($productId);
     }
 
-    public function showAdminLoginPage()
-    {
-        return $this->login->showLoginPage();
-    }
-
     public function isAdmin($userID, $pwd)
     {
-        return $this->db->isAdmin($userID, $pwd);
+        return $this->dbhelper->isAdmin($userID, $pwd);
     }
 
     public function onLoad()
@@ -253,7 +250,7 @@ class LIB_project1
         return isset($name['status']) && $name['status'] ? "" : "is-invalid";
     }
 
-    public function showInputFieldVertically($field, $type, $obj, $value = '')
+    public function showInputFieldVertically($field, $type, $obj=null, $value = '')
     {
         if (isset($obj)) {
             $errorClass = $this->getErrorClass($obj);

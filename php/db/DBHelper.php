@@ -6,6 +6,7 @@
  * Time: 5:28 PM
  */
 
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
 class DBHelper
@@ -30,5 +31,9 @@ class DBHelper
     public function hasProductsWithName($name)
     {
         return $this->db->getNumberOfProductsWithName($name) > 0;
+    }
+
+    public function isAdmin($username, $password){
+        return $this->db->getUser($username, $password)->getRole() == Constants::ROLE_ADMIN;
     }
 }

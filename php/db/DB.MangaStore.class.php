@@ -8,17 +8,18 @@
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/User.php";
 
 class dbMangaStore
 {
 
-    private $dbh;
+    private $pdo;
 
     function __construct()
     {
         try {
-            $this->dbh = new PDO("mysql:host=localhost;dbname=mangastore", 'root', '');
-            $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->pdo = new PDO("mysql:host=localhost;dbname=mangastore", 'root', '');
+            $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             die();
         }
@@ -27,25 +28,21 @@ class dbMangaStore
     public function getProductsOnSale()
     {
         $query = "SELECT * FROM products WHERE salePrice != 0";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
 
-        $products = $stmt->fetchAll();
-
-        return $products;
+        return $stmt->fetchAll();
     }
 
     public function getProductsOnCatalog($pageNumber)
     {
         $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT " . Constants::PAGE_SIZE . " OFFSET " . (($pageNumber - 1) * Constants::PAGE_SIZE);
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
 
-        $products = $stmt->fetchAll();
-
-        return $products;
+        return $stmt->fetchAll();
     }
 
     public function insert($title, $description, $price, $quantity, $imageName, $salePrice)
@@ -53,7 +50,7 @@ class dbMangaStore
         $query = "INSERT INTO 
                     products (productName, description, price, quantity, imageName, salePrice) 
                     VALUES (:title, :description, :price, :quantity, :imageName, :salePrice)";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(':title' => $title,
             ':description' => $description,
             ':price' => $price,
@@ -62,21 +59,21 @@ class dbMangaStore
             ':salePrice' => $salePrice));
     }
 
-    public function isAdmin($userID, $pwd)
+    public function getUser($userID, $pwd)
     {
-        $query = "SELECT count(*) AS no_of_users FROM users WHERE UserID = :userID AND Password = :pwd";
-        $stmt = $this->dbh->prepare($query);
+        $query = "SELECT * FROM users WHERE UserName = :userID AND Password = :pwd";
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':userID' => $userID,
             ':pwd' => $pwd));
-        $data = $stmt->fetch();
-        return $data["no_of_users"] == 1;
+        $stmt->setFetchMode(PDO::FETCH_CLASS, "User");
+        return $stmt->fetch();
     }
 
     public function addToCart($productId, $sid)
     {
         $q = "SELECT quantity FROM carts WHERE productID = :productID AND sessionID = :sessionID";
-        $stmt1 = $this->dbh->prepare($q);
+        $stmt1 = $this->pdo->prepare($q);
         $stmt1->execute(array(
             ':sessionID' => $sid,
             ':productID' => $productId
@@ -84,14 +81,14 @@ class dbMangaStore
 
         if ($stmt1->rowCount() > 0) {
             $query = "UPDATE carts SET quantity = quantity + 1 WHERE sessionID = :sessionID AND productID = :productID";
-            $stmt = $this->dbh->prepare($query);
+            $stmt = $this->pdo->prepare($query);
             $stmt->execute(array(
                 ':sessionID' => $sid,
                 ':productID' => $productId
             ));
         } else {
             $query = "INSERT INTO carts (sessionID, productID) VALUES (:sessionID, :productID)";
-            $stmt = $this->dbh->prepare($query);
+            $stmt = $this->pdo->prepare($query);
             $stmt->execute(array(
                 ':sessionID' => $sid,
                 ':productID' => $productId
@@ -103,7 +100,7 @@ class dbMangaStore
     public function replaceCartWithNewSessionID($oldID, $newID)
     {
         $query = "UPDATE carts SET sessionID = :newID WHERE sessionID = :oldID";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':newID' => $newID,
             ':oldID' => $oldID
@@ -113,7 +110,7 @@ class dbMangaStore
     public function getNumberOfProductsInCart($sessionID)
     {
         $query = "SELECT count(*) AS no_of_products FROM carts WHERE sessionID = :sessionID";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID));
         $data = $stmt->fetch();
@@ -124,7 +121,7 @@ class dbMangaStore
     {
         $query = "SELECT c.quantity AS quantity, p.productName AS title, p.price AS price, p.description AS description, p.salePrice AS salePrice,
  p.imageName AS imageName FROM carts c INNER JOIN products p ON c.productID = p.productID WHERE sessionID = :sessionID";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID));
         return $stmt->fetchAll();
@@ -133,7 +130,7 @@ class dbMangaStore
     public function getCartTotal($sessionID)
     {
         $query = "SELECT sum(p.price) AS total FROM carts c INNER JOIN products p ON c.productID = p.productID WHERE c.sessionID = :sessionID";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID));
         $data = $stmt->fetch();
@@ -146,13 +143,13 @@ class dbMangaStore
             JOIN carts ON carts.productID = products.productID 
             SET products.quantity = products.quantity + carts.quantity
             WHERE carts.sessionID = :sessionID";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID
         ));
 
         $query = "DELETE FROM carts WHERE sessionID = :sessionID";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID
         ));
@@ -161,7 +158,7 @@ class dbMangaStore
     public function getNumberOfProductsInCatalog()
     {
         $query = "SELECT count(*) AS no_of_products FROM products WHERE salePrice = 0";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         return intval($stmt->fetch()['no_of_products']);
     }
@@ -171,7 +168,7 @@ class dbMangaStore
     {
         $query = "INSERT INTO products (productName, description, imageName, quantity, price, salePrice) 
             VALUES (:name, :description, :file, :quantity, :price, :salePrice)";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         try {
             $stmt->execute(array(
                 ':name' => $name,
@@ -190,7 +187,7 @@ class dbMangaStore
     public function getNumberOfProductsWithName($name)
     {
         $query = "SELECT count(*) AS no_of_products FROM products WHERE productName = :name";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(':name' => $name));
         return $stmt->fetch()['no_of_products'];
     }
@@ -198,7 +195,7 @@ class dbMangaStore
     public function getNumberOfProductsOnSale()
     {
         $query = "SELECT count(*) AS no_of_products FROM products WHERE salePrice != 0";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array());
         return $stmt->fetch()['no_of_products'];
     }
@@ -206,7 +203,7 @@ class dbMangaStore
     public function getAllProducts()
     {
         $query = "SELECT * FROM products";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
 
@@ -218,7 +215,7 @@ class dbMangaStore
     public function getProductFromName($name)
     {
         $query = "SELECT * FROM products WHERE productName = :name";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(':name' => $name));
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
 
@@ -230,7 +227,7 @@ class dbMangaStore
     {
         $query = "UPDATE products SET productName = :newName, description = :newDescription, imageName=:newImage, 
               quantity = :newQuantity, price = :newPrice, salePrice = :newSalePrice WHERE productName = :oldProductName";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':newName' => $newName,
             ':newDescription' => $newDescription,
@@ -247,7 +244,7 @@ class dbMangaStore
     public function reduceQuantity($productId)
     {
         $query = "UPDATE products SET quantity = quantity - 1 WHERE productID = :productId";
-        $stmt = $this->dbh->prepare($query);
+        $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':productId' => $productId
         ));
