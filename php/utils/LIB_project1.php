@@ -44,12 +44,13 @@ class LIB_project1
     public function showProductsInCatalog($page)
     {
         $no_of_products = $this->db->getNumberOfProductsInCatalog();
+
         if ($page < 1) {
             $page = 1;
             header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
             die();
-        } else if (($page * (Constants::PAGE_SIZE - 1)) > $no_of_products) {
-            $page = intval($no_of_products / (Constants::PAGE_SIZE - 1));
+        } else if ((($page - 1) * Constants::PAGE_SIZE) > $no_of_products) {
+            $page = ceil($no_of_products / Constants::PAGE_SIZE); // 9
             header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
             die();
         }
