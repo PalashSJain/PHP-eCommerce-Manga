@@ -36,4 +36,19 @@ class DBHelper
     public function isAdmin($username, $password){
         return $this->db->getUser($username, $password)->getRole() == Constants::ROLE_ADMIN;
     }
+
+    public function addToCart($productId, $sid)
+    {
+        $item = $this->db->getCartItem($productId, $sid);
+        if (isset($item) && !empty($item)) {
+            return $this->db->updateQuantityInCart($productId, $sid) > 0;
+        } else {
+            return $this->db->insertItemToCart($productId, $sid) != -1;
+        }
+    }
+
+    public function reduceQuantity($productId)
+    {
+        return $this->db->reduceQuantity($productId) == 1;
+    }
 }

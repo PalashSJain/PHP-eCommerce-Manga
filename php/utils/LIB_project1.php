@@ -56,12 +56,12 @@ class LIB_project1
 
     public function addProductToCart($productId, $sid)
     {
-        $this->db->addToCart($productId, $sid);
+        return $this->dbhelper->addToCart($productId, $sid);
     }
 
     public function reduceQuantity($productId)
     {
-        $this->db->reduceQuantity($productId);
+        return $this->dbhelper->reduceQuantity($productId);
     }
 
     public function isAdmin($userID, $pwd)

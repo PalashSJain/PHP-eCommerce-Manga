@@ -15,8 +15,10 @@ $util = new LIB_project1();
 $util->onLoad();
 
 if (isset($_POST['addToCart'])) {
-    $util->addProductToCart($_POST['addToCart'], $_COOKIE['SID']);
-    $util->reduceQuantity($_POST['addToCart']);
+    $isUpdated = $util->addProductToCart($_POST['addToCart'], $_COOKIE['SID']);
+    if ($isUpdated) {
+        $util->reduceQuantity($_POST['addToCart']);
+    }
 }
 
 $page = 1;

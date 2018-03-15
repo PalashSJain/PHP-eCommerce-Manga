@@ -9,6 +9,7 @@
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/User.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Cart.php";
 
 class dbMangaStore
 {
@@ -70,31 +71,39 @@ class dbMangaStore
         return $stmt->fetch();
     }
 
-    public function addToCart($productId, $sid)
+    public function getCartItem($productId, $sid)
     {
-        $q = "SELECT quantity FROM carts WHERE productID = :productID AND sessionID = :sessionID";
-        $stmt1 = $this->pdo->prepare($q);
-        $stmt1->execute(array(
+        $query = "SELECT * FROM carts WHERE productID = :productID AND sessionID = :sessionID";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute(array(
             ':sessionID' => $sid,
             ':productID' => $productId
         ));
+        $stmt->setFetchMode(PDO::FETCH_CLASS, "Cart");
+        return $stmt->fetch();
+    }
 
-        if ($stmt1->rowCount() > 0) {
-            $query = "UPDATE carts SET quantity = quantity + 1 WHERE sessionID = :sessionID AND productID = :productID";
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute(array(
-                ':sessionID' => $sid,
-                ':productID' => $productId
-            ));
-        } else {
-            $query = "INSERT INTO carts (sessionID, productID) VALUES (:sessionID, :productID)";
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute(array(
-                ':sessionID' => $sid,
-                ':productID' => $productId
-            ));
-        }
+    public function updateQuantityInCart($productId, $sid)
+    {
+        $query = "UPDATE carts SET quantity = quantity + 1 WHERE sessionID = :sessionID AND productID = :productID";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute(array(
+            ':sessionID' => $sid,
+            ':productID' => $productId
+        ));
+        return $stmt->rowCount();
+    }
 
+    public function insertItemToCart($productId, $sid)
+    {
+        $query = "INSERT INTO carts (sessionID, productID, quantity) VALUES (:sessionID, :productID, 1)";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute(array(
+            ':sessionID' => $sid,
+            ':productID' => $productId
+        ));
+        echo "..." . $this->pdo->lastInsertId();
+        return $this->pdo->lastInsertId();
     }
 
     public function replaceCartWithNewSessionID($oldID, $newID)
@@ -248,7 +257,7 @@ class dbMangaStore
         $stmt->execute(array(
             ':productId' => $productId
         ));
-        return $stmt->rowCount() == 1;
+        return $stmt->rowCount();
     }
 
 }
