@@ -19,6 +19,9 @@ $validator = new FormValidator();
 $option = "";
 $message = "";
 
+$name = $description = $image = $quantity = $price = $salePrice = null;
+$xname = $xdescription = $ximage = $xquantity = $xprice = $xsalePrice = null;
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
     if (isset($_POST['submit']) && $_POST['submit'] == 'Submit') {
@@ -107,13 +110,13 @@ if ($_SESSION['isAdmin']) {
             <h3>Add new product!</h3>
             <div class='card'>
                <form method='post' action='' enctype='multipart/form-data'>"
-        . $util->showInputFieldVertically("Name", "text", (isset($name) ? $util->getErrorClass($name) : ""), (isset($name) ? $util->getErrorMessage($name) : ""))
-        . $util->showTextFieldVertically("Description", (isset($description) ? $util->getErrorClass($description) : ""), (isset($description) ? $util->getErrorMessage($description) : ""))
-        . $util->showFileFieldAsRow("Image", "file", (isset($image) ? $util->getErrorClass($image) : ""), (isset($image) ? $util->getErrorMessage($image) : ""))
-        . $util->showInputFieldAsRow("Quantity", "number", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""))
-        . $util->showInputFieldAsRow("Price", "number", (isset($price) ? $util->getErrorClass($price) : ""), (isset($price) ? $util->getErrorMessage($price) : ""), "$")
-        . $util->showInputFieldAsRow("Sale Price", "number", (isset($salePrice) ? $util->getErrorClass($salePrice) : ""), (isset($salePrice) ? $util->getErrorMessage($salePrice) : ""), "$")
-        . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
+                . $util->showInputFieldVertically("Name", "text", $name)
+                . $util->showTextFieldVertically("Description", $description)
+                . $util->showFileFieldAsRow("Image", "file", $image)
+                . $util->showInputFieldAsRow("Quantity", "number", $quantity)
+                . $util->showInputFieldAsRow("Price", "number", $price, "$")
+                . $util->showInputFieldAsRow("Sale Price", "number", $salePrice, "$")
+                . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
                   <button type='submit' class='btn btn-success col-form-label' name='submit' value='Submit'>Submit</button>
                </form>
             </div>
@@ -129,13 +132,13 @@ if ($_SESSION['isAdmin']) {
             " . (
         (isset($product) && !empty($product)) ?
             "<form method='post' action='' enctype='multipart/form-data'>"
-            . $util->showInputFieldVertically("Name", "text", (isset($xname) ? $util->getErrorClass($xname) : ""), (isset($xname) ? $util->getErrorMessage($xname) : ""), $product->getProductName())
-            . $util->showTextFieldVertically("Description", (isset($xdescription) ? $util->getErrorClass($xdescription) : ""), (isset($xdescription) ? $util->getErrorMessage($xdescription) : ""), $product->getDescription())
-            . $util->showFileFieldAsRow("Image", "file", (isset($ximage) ? $util->getErrorClass($ximage) : ""), (isset($ximage) ? $util->getErrorMessage($ximage) : ""))
-            . $util->showInputFieldAsRow("Quantity", "number", (isset($xquantity) ? $util->getErrorClass($xquantity) : ""), (isset($xquantity) ? $util->getErrorMessage($xquantity) : ""), '', $product->getQuantity())
-            . $util->showInputFieldAsRow("Price", "number", (isset($xprice) ? $util->getErrorClass($xprice) : ""), (isset($xprice) ? $util->getErrorMessage($xprice) : ""), "$", $product->getPrice())
-            . $util->showInputFieldAsRow("Sale Price", "number", (isset($xsalePrice) ? $util->getErrorClass($xsalePrice) : ""), (isset($xsalePrice) ? $util->getErrorMessage($xsalePrice) : ""), "$", $product->getSalePrice())
-            . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
+                    . $util->showInputFieldVertically("Name", "text", $xname, $product->getProductName())
+                    . $util->showTextFieldVertically("Description", $xdescription, $product->getDescription())
+                    . $util->showFileFieldAsRow("Image", "file", $ximage)
+                    . $util->showInputFieldAsRow("Quantity", "number", $xquantity, '', $product->getQuantity())
+                    . $util->showInputFieldAsRow("Price", "number", $xprice, "$", $product->getPrice())
+                    . $util->showInputFieldAsRow("Sale Price", "number", $xsalePrice, "$", $product->getSalePrice())
+                    . "<button type='reset' class='btn btn-warning col-form-label'>Reset</button>
                     <button type='submit' class='btn btn-success col-form-label' name='submit' value='Update'>Update</button>
                 </form>"
             : "")

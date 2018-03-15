@@ -202,8 +202,15 @@ class LIB_project1
             $quantity, $price, $salePrice);
     }
 
-    public function showInputFieldAsRow($field, $type, $errorClass, $errorMessage, $prepend = '', $value = '')
+    public function showInputFieldAsRow($field, $type, $obj, $prepend = '', $value = '')
     {
+        if (isset($obj)) {
+            $errorClass = $this->getErrorClass($obj);
+            $errorMessage = $this->getErrorMessage($obj);
+        } else {
+            $errorClass = "";
+            $errorMessage = "";
+        }
         return "<div class='form-group row'>
                      <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
                      <div class='col-sm-8 input-group mb-2'>"
@@ -215,8 +222,15 @@ class LIB_project1
                   </div>";
     }
 
-    public function showFileFieldAsRow($field, $type, $errorClass, $errorMessage)
+    public function showFileFieldAsRow($field, $type, $obj)
     {
+        if (isset($obj)) {
+            $errorClass = $this->getErrorClass($obj);
+            $errorMessage = $this->getErrorMessage($obj);
+        } else {
+            $errorClass = "";
+            $errorMessage = "";
+        }
         return "<div class='form-group row'>
                      <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
                      <div class='col-sm-8 input-group mb-2'>
@@ -236,11 +250,18 @@ class LIB_project1
 
     public function getErrorClass($name)
     {
-        return $name['status'] ? "" : "is-invalid";
+        return isset($name['status']) && $name['status'] ? "" : "is-invalid";
     }
 
-    public function showInputFieldVertically($field, $type, $errorClass = "", $errorMessage = "", $value = '')
+    public function showInputFieldVertically($field, $type, $obj, $value = '')
     {
+        if (isset($obj)) {
+            $errorClass = $this->getErrorClass($obj);
+            $errorMessage = $this->getErrorMessage($obj);
+        } else {
+            $errorClass = "";
+            $errorMessage = "";
+        }
         return "<div class='form-group'>
                      <label for='salePrice' class='col-sm-12 col-form-label'>$field</label>
                      <div class='col-sm-12 input-group mb-2'>
@@ -251,8 +272,15 @@ class LIB_project1
                   </div>";
     }
 
-    public function showTextFieldVertically($field, $errorClass, $errorMessage, $value = '')
+    public function showTextFieldVertically($field, $obj, $value = '')
     {
+        if (isset($obj)) {
+            $errorClass = $this->getErrorClass($obj);
+            $errorMessage = $this->getErrorMessage($obj);
+        } else {
+            $errorClass = "";
+            $errorMessage = "";
+        }
         return "<div class='form-group'>
                      <label for='description' class='col-sm-12 col-form-label'>$field</label>
                      <div class='col-sm-12 input-group mb-2'>
