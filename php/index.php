@@ -47,4 +47,3 @@ echo "
     <div class='col-md-1'></div>
 </div>";
 echo Navigation::footer();
-?>

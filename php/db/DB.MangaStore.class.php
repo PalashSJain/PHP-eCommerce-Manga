@@ -35,7 +35,7 @@ class dbMangaStore
         return $stmt->fetchAll();
     }
 
-    public function getProductsInCatalog($pageNumber, $limit, $offset)
+    public function getProductsInCatalog($limit, $offset)
     {
         $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT $limit OFFSET $offset";
         $stmt = $this->pdo->prepare($query);

@@ -40,4 +40,3 @@ echo    "</div>
 </div>";
 echo "</div>";
 echo Navigation::footer();
-?>

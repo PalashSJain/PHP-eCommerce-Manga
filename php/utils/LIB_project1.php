@@ -54,7 +54,7 @@ class LIB_project1
             die();
         }
 
-        $products = $this->db->getProductsInCatalog($page, Constants::PAGE_SIZE, (($page - 1) * Constants::PAGE_SIZE));
+        $products = $this->db->getProductsInCatalog(Constants::PAGE_SIZE, ($page - 1) * Constants::PAGE_SIZE);
         $html = "";
 
         $html .= "<div class='card-columns'>";

@@ -38,7 +38,7 @@ class Navigation
     
     <script type="text/javascript">
         function toast() {
-            var x = document.getElementById("snackbar")
+            var x = document.getElementById("snackbar");
             x.className = "show";
             setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
         }
@@ -55,11 +55,11 @@ HEAD;
   <a class='navbar-brand' href='/PHP-eCommerce-Manga/php/index.php'>Manga Store</a>
   <div class='navbar-collapse' id='navbarSupportedContent'>
     <ul class='navbar-nav ml-auto'>
-      <li class='nav-item '.($currentPage == 'Home' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/index.php'>Home</a></li>
-      <li class='nav-item '.($currentPage == 'Cart' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/cart.php'>Cart</a></li>
-      <li class='nav-item '.($currentPage == 'Admin' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/admin.php'>Admin</a></li>"
+      <li class='nav-item ".($currentPage == 'Home' ? 'active' : '')."'><a class='nav-link' href='/PHP-eCommerce-Manga/php/index.php'>Home</a></li>
+      <li class='nav-item ".($currentPage == 'Cart' ? 'active' : '')."'><a class='nav-link' href='/PHP-eCommerce-Manga/php/cart.php'>Cart</a></li>
+      <li class='nav-item ".($currentPage == 'Admin' ? 'active' : '')."'><a class='nav-link' href='/PHP-eCommerce-Manga/php/admin.php'>Admin</a></li>"
     . (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] ?
-                "<li class='nav-item '.($currentPage == 'Admin' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/logout.php'>Logout</a></li>"
+                "<li class='nav-item ".($currentPage == 'Admin' ? 'active' : '')."'><a class='nav-link' href='/PHP-eCommerce-Manga/php/logout.php'>Logout</a></li>"
                 : "")
 . "</ul>
   </div>

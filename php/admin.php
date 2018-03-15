@@ -161,4 +161,3 @@ if (isset($message) && !empty($message)) {
 }
 
 echo Navigation::footer();
-?>
