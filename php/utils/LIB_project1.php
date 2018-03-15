@@ -195,10 +195,10 @@ class LIB_project1
 </div>";
     }
 
-    public function addProduct($name, $description, /*$file, */
+    public function addProduct($name, $description, $file,
                                $quantity, $price, $salePrice)
     {
-        return $this->db->addProduct($name, $description, /*$file, */
+        return $this->db->addProduct($name, $description, $file,
             $quantity, $price, $salePrice);
     }
 
@@ -209,7 +209,19 @@ class LIB_project1
                      <div class='col-sm-8 input-group mb-2'>"
             . ((isset($prepend) && empty($prepend)) ? "" : "<div class='input-group-prepend'> <div class='input-group-text'>$prepend</div></div>")
             . "<input type='$type' class='form-control $errorClass' 
-                        id='salePrice' name='$field' placeholder='$field' value='$value'>
+                        id='salePrice' name='$field' placeholder='$field' value='$value' required>
+                        $errorMessage
+                     </div>
+                  </div>";
+    }
+
+    public function showFileFieldAsRow($field, $type, $errorClass, $errorMessage, $prepend = '', $value = ''){
+        return "<div class='form-group row'>
+                     <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
+                     <div class='col-sm-8 input-group mb-2'>"
+            . ((isset($prepend) && empty($prepend)) ? "" : "<div class='input-group-prepend'> <div class='input-group-text'>$prepend</div></div>")
+            . "<input type='$type' class='form-control $errorClass' accept='image/*'
+                        id='salePrice' name='$field' placeholder='$field' value='$value' required>
                         $errorMessage
                      </div>
                   </div>";
@@ -267,9 +279,14 @@ class LIB_project1
         return $this->db->getProductFromName($name);
     }
 
-    public function updateProduct($oldProductName, $newName, $newDescription, $newQuantity, $newPrice, $newSalePrice)
+    public function updateProduct($oldProductName, $newName, $newDescription, $newImage, $newQuantity, $newPrice, $newSalePrice)
     {
-        return $this->db->updateProductInformation($oldProductName, $newName, $newDescription, $newQuantity, $newPrice, $newSalePrice);
+        return $this->db->updateProductInformation($oldProductName, $newName, $newDescription, $newImage, $newQuantity, $newPrice, $newSalePrice);
+    }
+
+    public function isDefaultDropdownOption($option)
+    {
+        return $option == Constants::DEFAULT_DROPDOWN_OPTION;
     }
 
 }

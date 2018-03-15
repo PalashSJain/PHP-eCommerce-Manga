@@ -6,8 +6,8 @@
  * Time: 10:12 PM
  */
 
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
 
 class dbMangaStore
 {
@@ -168,7 +168,7 @@ class dbMangaStore
         return intval($stmt->fetch()['no_of_products']);
     }
 
-    public function addProduct($name, $description, /*$file, */
+    public function addProduct($name, $description, $file,
                                $quantity, $price, $salePrice)
     {
         $query = "INSERT INTO products (productName, description, imageName, quantity, price, salePrice) 
@@ -178,7 +178,7 @@ class dbMangaStore
             $stmt->execute(array(
                 ':name' => $name,
                 ':description' => $description,
-                ':file' => 'https://images.sftcdn.net/images/t_optimized,f_auto/p/ce2ece60-9b32-11e6-95ab-00163ed833e7/260663710/the-test-fun-for-friends-screenshot.jpg',
+                ':file' => $file,
                 ':quantity' => $quantity,
                 ':price' => $price,
                 'salePrice' => $salePrice
@@ -229,14 +229,15 @@ class dbMangaStore
         return $product;
     }
 
-    public function updateProductInformation($oldProductName, $newName, $newDescription, $newQuantity, $newPrice, $newSalePrice)
+    public function updateProductInformation($oldProductName, $newName, $newDescription, $newImage, $newQuantity, $newPrice, $newSalePrice)
     {
-        $query = "UPDATE products SET productName = :newName, description = :newDescription, quantity = :newQuantity,
-              price = :newPrice, salePrice = :newSalePrice WHERE productName = :oldProductName";
+        $query = "UPDATE products SET productName = :newName, description = :newDescription, imageName=:newImage, 
+              quantity = :newQuantity, price = :newPrice, salePrice = :newSalePrice WHERE productName = :oldProductName";
         $stmt = $this->dbh->prepare($query);
         $stmt->execute(array(
             ':newName' => $newName,
             ':newDescription' => $newDescription,
+            ':newImage' => $newImage,
             ':newQuantity' => $newQuantity,
             ':newPrice' => $newPrice,
             ':newSalePrice' => $newSalePrice,
@@ -262,13 +263,17 @@ class dbMangaStore
 //$dom = new DOMDocument();
 //$dom->load("input.xml");
 //$articles = $dom->getElementsByTagName("article");
+//$count = 1;
 //foreach ($articles as $article) {
 //    $title = trim($article->getElementsByTagName("h4")->item(0)->nodeValue);
 //    $description = "";
 //    $price = 15;
-//    $quantity = 1;
-//    $imageName = $article->getElementsByTagName("img")->item(0)->getAttribute("src");
+//    $quantity = 100;
+//    $imageName = "/PHP-eCommerce-Manga/images/$count.jpg";
 //    $salePrice = 0;
 //
 //    $db->insert($title, $description, $price, $quantity, $imageName, $salePrice);
+//    $count += 1;
+//
+//    if ($count > 43) break;
 //}

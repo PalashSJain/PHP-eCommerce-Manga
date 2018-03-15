@@ -6,11 +6,9 @@
  * Time: 10:11 PM
  */
 
-
-include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
-include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
-include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/FormValidator.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/FormValidator.php";
 
 session_start();
 
@@ -23,18 +21,26 @@ $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    print_r($_POST);
+    echo "<br />";
+    print_r($_FILES);
+
     if (isset($_POST['submit']) && $_POST['submit'] == 'Submit') {
         $name = $validator->parseName($_POST['Name']);
         $description = FormValidator::parseDescription($_POST['Description']);
+        $image = $validator->isImage($_FILES['Image']);
         $quantity = FormValidator::parseQuantity($_POST['Quantity']);
         $price = FormValidator::parsePrice($_POST['Price']);
         $salePrice = $validator->parseSalePrice($_POST['Sale_Price']);
 
         $hasProductWithSameName = $validator->hasProductsWithName($name['data']);
-        if ($name['status'] && !$hasProductWithSameName && $description['status'] && $quantity['status'] && $price['status'] && $salePrice['status']) {
-            $message = $util->addProduct($name['data'],
+        if ($name['status'] && !$hasProductWithSameName && $description['status'] && $quantity['status']
+            && $price['status'] && $salePrice['status'] && $image['status']) {
+
+            $message = $util->addProduct(
+                $name['data'],
                 $description['data'],
-//                    $_POST['file'],
+                $image['data'],
                 $quantity['data'],
                 $price['data'],
                 $salePrice['data']);
@@ -52,16 +58,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } else if (isset($_POST['submit']) && $_POST['submit'] == 'Update') {
         $xname = $validator->parseName($_POST['Name']);
         $xdescription = FormValidator::parseDescription($_POST['Description']);
+        $ximage = $validator->isImage($_FILES['Image']);
         $xquantity = FormValidator::parseQuantity($_POST['Quantity']);
         $xprice = FormValidator::parsePrice($_POST['Price']);
         $xsalePrice = $validator->parseSalePrice($_POST['Sale_Price'], $_SESSION['oldproduct']->getSalePrice() > 0);
 
-        if ($xname['status'] && $xdescription['status'] && $xquantity['status'] && $xprice['status'] && $xsalePrice['status']) {
+        if ($xname['status'] && $xdescription['status'] && $xquantity['status'] &&
+            $ximage['status'] && $xprice['status'] && $xsalePrice['status']) {
 
             if ($util->updateProduct($_SESSION['oldproduct']->getProductName(),
                 $xname['data'],
                 $xdescription['data'],
-//                    $_POST['file'],
+                $ximage['data'],
                 $xquantity['data'],
                 $xprice['data'],
                 $xsalePrice['data'])) {
@@ -81,7 +89,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         }
     } else if (isset($_POST['dropdownOptions'])) {
         $option = trim($_POST['dropdownOptions']);
-        if ($option != Constants::DEFAULT_DROPDOWN_OPTION) {
+        if (!$util->isDefaultDropdownOption($option)) {
             $product = $util->getProductFromName($option);
             $_SESSION['oldproduct'] = $product;
             $message = "Displaying information for product '" . $product->getProductName() . "'!";
@@ -102,10 +110,10 @@ if ($_SESSION['isAdmin']) {
          <div class='col-md-6'>
             <h3>Add new product!</h3>
             <div class='card'>
-               <form method='post' action=''>"
+               <form method='post' action='' enctype='multipart/form-data'>"
         . $util->showInputFieldVertically("Name", "text", (isset($name) ? $util->getErrorClass($name) : ""), (isset($name) ? $util->getErrorMessage($name) : ""))
         . $util->showTextFieldVertically("Description", (isset($description) ? $util->getErrorClass($description) : ""), (isset($description) ? $util->getErrorMessage($description) : ""))
-        . $util->showInputFieldAsRow("Image", "file", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""))
+        . $util->showFileFieldAsRow("Image", "file", (isset($image) ? $util->getErrorClass($image) : ""), (isset($image) ? $util->getErrorMessage($image) : ""))
         . $util->showInputFieldAsRow("Quantity", "number", (isset($quantity) ? $util->getErrorClass($quantity) : ""), (isset($quantity) ? $util->getErrorMessage($quantity) : ""))
         . $util->showInputFieldAsRow("Price", "number", (isset($price) ? $util->getErrorClass($price) : ""), (isset($price) ? $util->getErrorMessage($price) : ""), "$")
         . $util->showInputFieldAsRow("Sale Price", "number", (isset($salePrice) ? $util->getErrorClass($salePrice) : ""), (isset($salePrice) ? $util->getErrorMessage($salePrice) : ""), "$")
@@ -124,10 +132,10 @@ if ($_SESSION['isAdmin']) {
                 </form>    
             " . (
         (isset($product) && !empty($product)) ?
-            "<form method='post' action=''>"
+            "<form method='post' action='' enctype='multipart/form-data'>"
             . $util->showInputFieldVertically("Name", "text", (isset($xname) ? $util->getErrorClass($xname) : ""), (isset($xname) ? $util->getErrorMessage($xname) : ""), $product->getProductName())
             . $util->showTextFieldVertically("Description", (isset($xdescription) ? $util->getErrorClass($xdescription) : ""), (isset($xdescription) ? $util->getErrorMessage($xdescription) : ""), $product->getDescription())
-            . $util->showInputFieldAsRow("Image", "file", (isset($xquantity) ? $util->getErrorClass($xquantity) : ""), (isset($xquantity) ? $util->getErrorMessage($xquantity) : ""), '', $product->getImageName())
+            . $util->showFileFieldAsRow("Image", "file", (isset($ximage) ? $util->getErrorClass($ximage) : ""), (isset($ximage) ? $util->getErrorMessage($ximage) : ""))
             . $util->showInputFieldAsRow("Quantity", "number", (isset($xquantity) ? $util->getErrorClass($xquantity) : ""), (isset($xquantity) ? $util->getErrorMessage($xquantity) : ""), '', $product->getQuantity())
             . $util->showInputFieldAsRow("Price", "number", (isset($xprice) ? $util->getErrorClass($xprice) : ""), (isset($xprice) ? $util->getErrorMessage($xprice) : ""), "$", $product->getPrice())
             . $util->showInputFieldAsRow("Sale Price", "number", (isset($xsalePrice) ? $util->getErrorClass($xsalePrice) : ""), (isset($xsalePrice) ? $util->getErrorMessage($xsalePrice) : ""), "$", $product->getSalePrice())

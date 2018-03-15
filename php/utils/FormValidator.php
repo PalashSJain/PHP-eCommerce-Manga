@@ -6,7 +6,8 @@
  * Time: 5:28 PM
  */
 
-include $_SERVER['DOCUMENT_ROOT'] . "/php/db/DBHelper.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DBHelper.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 
 class FormValidator extends DBHelper
 {
@@ -38,12 +39,33 @@ class FormValidator extends DBHelper
         return $data;
     }
 
-    public static function isImageFile($input)
+    public function isImage($input)
     {
+        $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/images/";
+        $target_file = $target_dir . basename($input['name']);
+        $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
+        $imageSize = getimagesize($input['tmp_name']);
+
         $data = array();
-        $data['status'] = true;
-        $data['data'] = $input;
+        $data['status'] = in_array($imageFileType, Constants::IMAGE_EXTENSIONS) &&
+            $input['size'] < 5000000 &&
+            in_array($imageSize['mime'], Constants::IMAGE_TYPES) &&
+            move_uploaded_file($input["tmp_name"], $target_file);
+
+        $data['data'] = "http://" . $_SERVER['HTTP_HOST'] . "/PHP-eCommerce-Manga/images/" . basename($input['name']);
         $data['error'] = "";
+        if (!$data['status']) {
+            if (!in_array($imageFileType, Constants::IMAGE_EXTENSIONS)) {
+                $data['error'] = "File uploaded does not have accepted extension.";
+            } else if ($input['size'] > 5000000) {
+                $data['error'] = "File size is larger than 5mb.";
+            } else if (!in_array($imageSize['mime'], Constants::IMAGE_TYPES)) {
+                $data['error'] = "File uploaded does not have accepted format.";
+            } else {
+                $data['error'] = "Failed to upload file.";
+            }
+        }
+
         return $data;
     }
 
@@ -83,7 +105,7 @@ class FormValidator extends DBHelper
         return $data;
     }
 
-    public function parseSalePrice($input, $isAlreadyOnSale=false)
+    public function parseSalePrice($input, $isAlreadyOnSale = false)
     {
         $input = FormValidator::sanitize($input);
         $input = intval($input);
@@ -114,4 +136,5 @@ class FormValidator extends DBHelper
         $var = strip_tags($var);
         return $var;
     }
+
 }
