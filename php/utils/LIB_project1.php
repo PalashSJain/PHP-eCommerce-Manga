@@ -7,23 +7,18 @@
  */
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Sale.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Catalog.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DBHelper.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
 class LIB_project1
 {
 
-    private $sale, $catalog, $dbhelper;
-
-    private $db;
+    private $dbhelper, $db;
 
     function __construct()
     {
         $this->db = new dbMangaStore();
-        $this->sale = new Sale();
-        $this->catalog = new Catalog();
         $this->dbhelper = new DBHelper();
     }
 
@@ -35,10 +30,18 @@ class LIB_project1
     public function getProductsOnSale()
     {
         $products = $this->db->getProductsOnSale();
-        return $this->sale->makeProductsOnSale($products);
+        $html = "";
+
+        $html .= "<div class='card-columns'>";
+        foreach ($products as $product) {
+            $html .= $product->makeHTMLCode();
+        }
+        $html .= "</div>";
+
+        return $html;
     }
 
-    public function getProductsOnCatalog($page)
+    public function showProductsInCatalog($page)
     {
         $no_of_products = $this->db->getNumberOfProductsInCatalog();
         if ($page < 1) {
@@ -50,8 +53,17 @@ class LIB_project1
             header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
             die();
         }
-        $products = $this->db->getProductsOnCatalog($page);
-        return $this->catalog->makeProductsOnCatalog($products);
+
+        $products = $this->db->getProductsInCatalog($page, Constants::PAGE_SIZE, (($page - 1) * Constants::PAGE_SIZE));
+        $html = "";
+
+        $html .= "<div class='card-columns'>";
+        foreach ($products as $product) {
+            $html .= $product->makeHTMLCode();
+        }
+        $html .= "</div>";
+
+        return $html;
     }
 
     public function addProductToCart($productId, $sid)
@@ -82,10 +94,10 @@ class LIB_project1
 
     public function isCartEmpty()
     {
-        return $this->db->getNumberOfProductsInCart(session_id()) == 0;
+        return $this->dbhelper->isCartEmpty(session_id());
     }
 
-    public function getProductsInCart()
+    public function showProductsInCart()
     {
         $rows = "";
         $netSum = 0;
@@ -127,7 +139,7 @@ class LIB_project1
         return $rows;
     }
 
-    public function getCartTable()
+    public function showCartTable()
     {
         return "
             <table class='table table-striped'>
@@ -140,12 +152,12 @@ class LIB_project1
                     </tr>
                 </thead>
                 <tbody>"
-            . $this->getProductsInCart() .
+            . $this->showProductsInCart() .
             "</tbody>
             </table>";
     }
 
-    public function getBtnToClearCart()
+    public function showBtnToClearCart()
     {
         return "
             <form method='post' onsubmit='return confirm(\"Are you sure you want to clear out the cart?\")'>
@@ -155,7 +167,7 @@ class LIB_project1
 
     public function clearCart()
     {
-        $this->db->clearCart(session_id());
+        return $this->dbhelper->clearCart(session_id());
     }
 
     public function showEmptyCart()
@@ -167,7 +179,7 @@ class LIB_project1
             </div>";
     }
 
-    public function getPagination($page)
+    public function showPagination($page)
     {
         return "
             <ul class='pagination justify-content-center'>
@@ -177,26 +189,20 @@ class LIB_project1
             </ul>";
     }
 
-    public function getDropdownOfAllProducts()
+    public function addProduct($name, $description, $file, $quantity, $price, $salePrice)
     {
-        return "
-<div class='dropdown'>
-  <button class='btn btn-secondary dropdown-toggle' type='button' id='dropdownMenuButton' data-toggle='dropdown' aria-haspopup='true' aria-expanded='false'>
-    Dropdown button
-  </button>
-  <div class='dropdown-menu' aria-labelledby='dropdownMenuButton'>
-    <a class='dropdown-item' href='#'>Action</a>
-    <a class='dropdown-item' href='#'>Another action</a>
-    <a class='dropdown-item' href='#'>Something else here</a>
-  </div>
-</div>";
+        return $this->db->addProduct($name, $description, $file, $quantity, $price, $salePrice);
     }
 
-    public function addProduct($name, $description, $file,
-                               $quantity, $price, $salePrice)
+    public function getErrorMessage($name)
     {
-        return $this->db->addProduct($name, $description, $file,
-            $quantity, $price, $salePrice);
+        if (!empty($name['error'])) return "<div class='invalid-feedback'>{$name['error']}</div>";
+        else return "";
+    }
+
+    public function getErrorClass($name)
+    {
+        return isset($name['status']) && $name['status'] ? "" : "is-invalid";
     }
 
     public function showInputFieldAsRow($field, $type, $obj, $prepend = '', $value = '')
@@ -213,7 +219,7 @@ class LIB_project1
                      <div class='col-sm-8 input-group mb-2'>"
             . ((isset($prepend) && empty($prepend)) ? "" : "<div class='input-group-prepend'> <div class='input-group-text'>$prepend</div></div>")
             . "<input type='$type' class='form-control $errorClass' 
-                        id='salePrice' name='$field' placeholder='$field' value='$value' required>
+                         name='$field' placeholder='$field' value='$value' required>
                         $errorMessage
                      </div>
                   </div>";
@@ -232,25 +238,14 @@ class LIB_project1
                      <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
                      <div class='col-sm-8 input-group mb-2'>
                         <input type='$type' class='form-control $errorClass' accept='image/*'
-                        id='salePrice' name='$field' placeholder='$field'>
+                         name='$field' placeholder='$field'>
                         $errorMessage
                      </div>
                      <div class='col-sm-12'><small>A default image will be used if no image is provided.</small></div>
                   </div>";
     }
 
-    public function getErrorMessage($name)
-    {
-        if (!empty($name['error'])) return "<div class='invalid-feedback'>{$name['error']}</div>";
-        else return "";
-    }
-
-    public function getErrorClass($name)
-    {
-        return isset($name['status']) && $name['status'] ? "" : "is-invalid";
-    }
-
-    public function showInputFieldVertically($field, $type, $obj=null, $value = '')
+    public function showInputFieldVertically($field, $type, $obj = null, $value = '')
     {
         if (isset($obj)) {
             $errorClass = $this->getErrorClass($obj);
@@ -263,7 +258,7 @@ class LIB_project1
                      <label for='salePrice' class='col-sm-12 col-form-label'>$field</label>
                      <div class='col-sm-12 input-group mb-2'>
                         <input type='$type' class='form-control $errorClass' 
-                        id='salePrice' name='$field' placeholder='$field' value='$value' required>
+                         name='$field' placeholder='$field' value='$value' required>
                         $errorMessage
                      </div>
                   </div>";
@@ -290,7 +285,7 @@ class LIB_project1
     public function getProductOptions($option)
     {
         $output = "<option value='" . Constants::DEFAULT_DROPDOWN_OPTION . "'>" . Constants::DEFAULT_DROPDOWN_OPTION . "</option>";
-        $products = $this->db->getAllProducts();
+        $products = $this->db->getAllProductNames();
         foreach ($products as $product) {
             if ($product->getProductName() == $option) {
                 $output .= "<option value='" . $product->getProductName() . "' selected>" . $product->getProductName() . "</option>";

@@ -39,9 +39,9 @@ echo "
              
         <div>
             <h3>Other Mangas in Catalog!</h3>"
-            . $util->getPagination($page)
-            . $util->getProductsOnCatalog($page)
-            . $util->getPagination($page)
+            . $util->showPagination($page)
+            . $util->showProductsInCatalog($page)
+            . $util->showPagination($page)
             . "</div>
     </div>
     <div class='col-md-1'></div>

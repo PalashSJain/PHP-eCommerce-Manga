@@ -16,8 +16,6 @@ $util->onLoad();
 
 if (isset($_POST['clearCart'])) {
     $util->clearCart();
-    header("Location: cart.php");
-    die();
 }
 
 echo Navigation::header("Cart");
@@ -33,8 +31,8 @@ echo "
         } else {
             echo "
             <h1>Current cart contents</h1>"
-                . $util->getCartTable()
-                . $util->getBtnToClearCart();
+                . $util->showCartTable()
+                . $util->showBtnToClearCart();
         }
 echo    "</div>
         <div class='col-md-1'></div>

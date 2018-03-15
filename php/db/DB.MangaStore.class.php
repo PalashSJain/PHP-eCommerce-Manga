@@ -6,7 +6,6 @@
  * Time: 10:12 PM
  */
 
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/User.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Cart.php";
@@ -36,9 +35,9 @@ class dbMangaStore
         return $stmt->fetchAll();
     }
 
-    public function getProductsOnCatalog($pageNumber)
+    public function getProductsInCatalog($pageNumber, $limit, $offset)
     {
-        $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT " . Constants::PAGE_SIZE . " OFFSET " . (($pageNumber - 1) * Constants::PAGE_SIZE);
+        $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT $limit OFFSET $offset";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
@@ -102,7 +101,6 @@ class dbMangaStore
             ':sessionID' => $sid,
             ':productID' => $productId
         ));
-        echo "..." . $this->pdo->lastInsertId();
         return $this->pdo->lastInsertId();
     }
 
@@ -146,7 +144,7 @@ class dbMangaStore
         return $data["total"];
     }
 
-    public function clearCart($sessionID)
+    public function refillProductsQuantityFromCart($sessionID)
     {
         $query = "UPDATE products 
             JOIN carts ON carts.productID = products.productID 
@@ -157,11 +155,18 @@ class dbMangaStore
             ':sessionID' => $sessionID
         ));
 
+        return $stmt->rowCount();
+    }
+
+    public function removeProductsFromCart($sessionID)
+    {
         $query = "DELETE FROM carts WHERE sessionID = :sessionID";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
             ':sessionID' => $sessionID
         ));
+
+        return $stmt->rowCount();
     }
 
     public function getNumberOfProductsInCatalog()
@@ -172,8 +177,7 @@ class dbMangaStore
         return intval($stmt->fetch()['no_of_products']);
     }
 
-    public function addProduct($name, $description, $file,
-                               $quantity, $price, $salePrice)
+    public function addProduct($name, $description, $file, $quantity, $price, $salePrice)
     {
         $query = "INSERT INTO products (productName, description, imageName, quantity, price, salePrice) 
             VALUES (:name, :description, :file, :quantity, :price, :salePrice)";
@@ -209,16 +213,14 @@ class dbMangaStore
         return $stmt->fetch()['no_of_products'];
     }
 
-    public function getAllProducts()
+    public function getAllProductNames()
     {
-        $query = "SELECT * FROM products";
+        $query = "SELECT productName FROM products ORDER by productID DESC";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
 
-        $products = $stmt->fetchAll();
-
-        return $products;
+        return $stmt->fetchAll();
     }
 
     public function getProductFromName($name)
@@ -228,8 +230,7 @@ class dbMangaStore
         $stmt->execute(array(':name' => $name));
         $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
 
-        $product = $stmt->fetch();
-        return $product;
+        return $stmt->fetch();
     }
 
     public function updateProductInformation($oldProductName, $newName, $newDescription, $newImage, $newQuantity, $newPrice, $newSalePrice)

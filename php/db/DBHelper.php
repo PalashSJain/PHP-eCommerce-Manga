@@ -24,7 +24,8 @@ class DBHelper
         return $this->db->getNumberOfProductsOnSale() < 5;
     }
 
-    public function canSaleFewerProducts(){
+    public function canSaleFewerProducts()
+    {
         return $this->db->getNumberOfProductsOnSale() > 3;
     }
 
@@ -33,7 +34,8 @@ class DBHelper
         return $this->db->getNumberOfProductsWithName($name) > 0;
     }
 
-    public function isAdmin($username, $password){
+    public function isAdmin($username, $password)
+    {
         return $this->db->getUser($username, $password)->getRole() == Constants::ROLE_ADMIN;
     }
 
@@ -50,5 +52,16 @@ class DBHelper
     public function reduceQuantity($productId)
     {
         return $this->db->reduceQuantity($productId) == 1;
+    }
+
+    public function isCartEmpty($sessionID)
+    {
+        return $this->db->getNumberOfProductsInCart($sessionID) == 0;
+    }
+
+    public function clearCart($session_id)
+    {
+        $this->db->refillProductsQuantityFromCart($session_id);
+        return $this->db->removeProductsFromCart($session_id);
     }
 }
