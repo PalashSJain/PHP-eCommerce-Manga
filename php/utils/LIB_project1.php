@@ -221,7 +221,7 @@ class LIB_project1
                      <div class='col-sm-8 input-group mb-2'>"
             . ((isset($prepend) && empty($prepend)) ? "" : "<div class='input-group-prepend'> <div class='input-group-text'>$prepend</div></div>")
             . "<input type='$type' class='form-control $errorClass' accept='image/*'
-                        id='salePrice' name='$field' placeholder='$field' value='$value' required>
+                        id='salePrice' name='$field' placeholder='$field' value='$value'>
                         $errorMessage
                      </div>
                   </div>";

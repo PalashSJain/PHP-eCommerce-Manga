@@ -21,10 +21,6 @@ $message = "";
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
-    print_r($_POST);
-    echo "<br />";
-    print_r($_FILES);
-
     if (isset($_POST['submit']) && $_POST['submit'] == 'Submit') {
         $name = $validator->parseName($_POST['Name']);
         $description = FormValidator::parseDescription($_POST['Description']);

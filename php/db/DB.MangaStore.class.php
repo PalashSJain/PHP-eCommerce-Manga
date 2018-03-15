@@ -20,7 +20,6 @@ class dbMangaStore
             $this->dbh = new PDO("mysql:host=localhost;dbname=mangastore", 'root', '');
             $this->dbh->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
-            echo $e->getMessage();
             die();
         }
     }
@@ -61,7 +60,6 @@ class dbMangaStore
             ':quantity' => $quantity,
             ':imageName' => $imageName,
             ':salePrice' => $salePrice));
-        echo $this->dbh->lastInsertId();
     }
 
     public function isAdmin($userID, $pwd)
@@ -184,7 +182,6 @@ class dbMangaStore
                 'salePrice' => $salePrice
             ));
         } catch (Exception $e) {
-            echo $e->getMessage();
             return "Failed to add '$name'.";
         }
         return "'$name' added successfully.";
