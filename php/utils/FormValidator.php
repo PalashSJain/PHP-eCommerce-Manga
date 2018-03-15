@@ -12,6 +12,38 @@ include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
 class FormValidator extends DBHelper
 {
 
+    public function parseUsername($input){
+        $input = FormValidator::sanitize($input);
+        $data = array();
+        $data['status'] = !empty($input);
+        $data['data'] = $input;
+        $data['error'] = "";
+        if (!$data['status']) {
+            if (empty($input)) {
+                $data['error'] = "User ID is blank.";
+            } else {
+                $data['error'] = "Invalid User ID.";
+            }
+        }
+        return $data;
+    }
+
+    public function parsePassword($input){
+        $input = FormValidator::sanitize($input);
+        $data = array();
+        $data['status'] = !empty($input);
+        $data['data'] = $input;
+        $data['error'] = "";
+        if (!$data['status']) {
+            if (empty($input)) {
+                $data['error'] = "Password is blank.";
+            } else {
+                $data['error'] = "Invalid Password.";
+            }
+        }
+        return $data;
+    }
+
     public function parseName($input)
     {
         $input = FormValidator::sanitize($input);

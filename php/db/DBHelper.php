@@ -7,6 +7,7 @@
  */
 
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
+include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/User.php";
 include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
 
 class DBHelper
@@ -36,7 +37,21 @@ class DBHelper
 
     public function isAdmin($username, $password)
     {
-        return $this->db->getUser($username, $password)->getRole() == Constants::ROLE_ADMIN;
+        $user = $this->db->getUser($username);
+
+        if (isset($user) && !empty($user)) {
+            if (password_verify($password, $user->getPassword())) {
+                if ($user->isAdmin()) {
+                    return true;
+                } else {
+                    return "User is not an Admin";
+                }
+            } else {
+                return "Incorrect password for this user.";
+            }
+        } else {
+            return "User with this ID does not exist.";
+        }
     }
 
     public function addToCart($productId, $sid)

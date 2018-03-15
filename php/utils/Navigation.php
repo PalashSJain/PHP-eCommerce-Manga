@@ -52,7 +52,7 @@ HEAD;
     {
         return "
 <nav class='navbar navbar-expand-sm navbar-light'>
-  <a class='navbar-brand' href='#'>Manga Store</a>
+  <a class='navbar-brand' href='/PHP-eCommerce-Manga/php/index.php'>Manga Store</a>
   <div class='navbar-collapse' id='navbarSupportedContent'>
     <ul class='navbar-nav ml-auto'>
       <li class='nav-item '.($currentPage == 'Home' ? 'active' : '').''><a class='nav-link' href='/PHP-eCommerce-Manga/php/index.php'>Home</a></li>

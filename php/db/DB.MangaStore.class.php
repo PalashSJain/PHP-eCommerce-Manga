@@ -59,13 +59,12 @@ class dbMangaStore
             ':salePrice' => $salePrice));
     }
 
-    public function getUser($userID, $pwd)
+    public function getUser($userID)
     {
-        $query = "SELECT * FROM users WHERE UserName = :userID AND Password = :pwd";
+        $query = "SELECT * FROM users WHERE username = :userID";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute(array(
-            ':userID' => $userID,
-            ':pwd' => $pwd));
+            ':userID' => $userID));
         $stmt->setFetchMode(PDO::FETCH_CLASS, "User");
         return $stmt->fetch();
     }
@@ -261,6 +260,17 @@ class dbMangaStore
         return $stmt->rowCount();
     }
 
+    public function addUser($username, $password, $role)
+    {
+        $query = "INSERT INTO users(username, password, role) VALUES (:username, :password, :role)";
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute(array(
+            ':username' => $username,
+            ':password' => password_hash($password, PASSWORD_BCRYPT),
+            ':role' => $role
+        ));
+    }
+
 }
 
 //$db = new dbMangaStore();
@@ -281,3 +291,6 @@ class dbMangaStore
 //
 //    if ($count > 43) break;
 //}
+
+//$db = new dbMangaStore();
+//$db->addUser("root", "root", 1);
