@@ -30,6 +30,11 @@
     margin: unset;
 }
 
+.no-margin-on-sides{
+    margin-right: 0;
+    margin-left: 0;
+}
+
 form {
     margin: 10px;
 }

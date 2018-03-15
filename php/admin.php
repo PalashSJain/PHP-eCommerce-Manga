@@ -102,7 +102,7 @@ if ($_SESSION['isAdmin']) {
     echo Navigation::header("Logout");
 
     echo "
-<div class='row py-5'>
+<div class='row py-5 no-margin-on-sides'>
    <div class='col-md-1'></div>
    <div class='col-md-10'>
       <div class='row'>
