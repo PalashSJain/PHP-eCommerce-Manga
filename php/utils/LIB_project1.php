@@ -215,15 +215,16 @@ class LIB_project1
                   </div>";
     }
 
-    public function showFileFieldAsRow($field, $type, $errorClass, $errorMessage, $prepend = '', $value = ''){
+    public function showFileFieldAsRow($field, $type, $errorClass, $errorMessage)
+    {
         return "<div class='form-group row'>
                      <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
-                     <div class='col-sm-8 input-group mb-2'>"
-            . ((isset($prepend) && empty($prepend)) ? "" : "<div class='input-group-prepend'> <div class='input-group-text'>$prepend</div></div>")
-            . "<input type='$type' class='form-control $errorClass' accept='image/*'
-                        id='salePrice' name='$field' placeholder='$field' value='$value'>
+                     <div class='col-sm-8 input-group mb-2'>
+                        <input type='$type' class='form-control $errorClass' accept='image/*'
+                        id='salePrice' name='$field' placeholder='$field'>
                         $errorMessage
                      </div>
+                     <div class='col-sm-12'><small>A default image will be used if no image is provided.</small></div>
                   </div>";
     }
 
@@ -238,7 +239,7 @@ class LIB_project1
         return $name['status'] ? "" : "is-invalid";
     }
 
-    public function showInputFieldVertically($field, $type, $errorClass="", $errorMessage="", $value = '')
+    public function showInputFieldVertically($field, $type, $errorClass = "", $errorMessage = "", $value = '')
     {
         return "<div class='form-group'>
                      <label for='salePrice' class='col-sm-12 col-form-label'>$field</label>
