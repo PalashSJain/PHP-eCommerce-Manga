@@ -6,9 +6,9 @@
  * Time: 10:12 PM
  */
 
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/User.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Cart.php";
+include_once ROOT . "project1/utils/Product.php";
+include_once ROOT . "project1/utils/User.php";
+include_once ROOT . "project1/utils/Cart.php";
 
 class dbMangaStore
 {
@@ -18,13 +18,16 @@ class dbMangaStore
     function __construct()
     {
         try {
-            $this->pdo = new PDO("mysql:host=localhost;dbname=mangastore", 'root', '');
+            $this->pdo = new PDO("mysql:host={$_SERVER['DB_SERVER']};dbname={$_SERVER['DB']}", $_SERVER['DB_USER'], $_SERVER['DB_PASSWORD']);
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
             die();
         }
     }
 
+    /**
+     * @return array Products in the database whose sale price is not 0, that is they are on sale.
+     */
     public function getProductsOnSale()
     {
         try {
@@ -39,20 +42,32 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $limit int maximum number of Products
+     * @param $offset int starting point to look for Products
+     * @return array of Products whose sale price is 0, that is they are not on sale
+     */
     public function getProductsInCatalog($limit, $offset)
     {
         try {
-            $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT $limit OFFSET $offset";
+            $query = "SELECT * FROM products WHERE salePrice = 0 LIMIT :limit OFFSET :offset";
             $stmt = $this->pdo->prepare($query);
+
+            $stmt->bindValue(':limit', (int) $limit, PDO::PARAM_INT);
+            $stmt->bindValue(':offset', (int) $offset, PDO::PARAM_INT);
             $stmt->execute();
             $stmt->setFetchMode(PDO::FETCH_CLASS, "Product");
-
             return $stmt->fetchAll();
         } catch (PDOException $e) {
+            echo $e->getMessage();
             die();
         }
     }
 
+    /**
+     * @param $userID string username
+     * @return User object of the username
+     */
     public function getUser($userID)
     {
         try {
@@ -67,6 +82,11 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $productId int ID of the product
+     * @param $sid string session id
+     * @return Cart object of the product with ID $productId and user session $sid
+     */
     public function getCartItem($productId, $sid)
     {
         try {
@@ -83,6 +103,11 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $productId int ID of the product
+     * @param $sid string session id
+     * @return int number of carts updated with one more quantity
+     */
     public function updateQuantityInCart($productId, $sid)
     {
         try {
@@ -98,6 +123,11 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $productId int product id
+     * @param $sid string session id
+     * @return string last inserted id in table carts
+     */
     public function insertItemToCart($productId, $sid)
     {
         try {
@@ -113,6 +143,11 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $oldID string old session id
+     * @param $newID string new session id
+     * @return int number of rows updated in table carts
+     */
     public function replaceCartWithNewSessionID($oldID, $newID)
     {
         try {
@@ -129,6 +164,10 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $sessionID string session id
+     * @return int number of products in cart with session id $sessionID
+     */
     public function getNumberOfProductsInCart($sessionID)
     {
         try {
@@ -143,6 +182,10 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $sessionID string session id
+     * @return array of quantity, productname, title, price, description, saleprice and imagename
+     */
     public function getProductsInCart($sessionID)
     {
         try {
@@ -157,20 +200,10 @@ class dbMangaStore
         }
     }
 
-    public function getCartTotal($sessionID)
-    {
-        try {
-            $query = "SELECT sum(p.price) AS total FROM carts c INNER JOIN products p ON c.productID = p.productID WHERE c.sessionID = :sessionID";
-            $stmt = $this->pdo->prepare($query);
-            $stmt->execute(array(
-                ':sessionID' => $sessionID));
-            $data = $stmt->fetch();
-            return $data["total"];
-        } catch (PDOException $e) {
-            die();
-        }
-    }
-
+    /**
+     * @param $sessionID string session id
+     * @return int number of rows updated after refilling quantities in products table from the carts table
+     */
     public function refillProductsQuantityFromCart($sessionID)
     {
         try {
@@ -190,6 +223,10 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $sessionID string session id
+     * @return int number of rows deleted from carts table with the session id as $sessionID
+     */
     public function removeProductsFromCart($sessionID)
     {
         try {
@@ -205,6 +242,9 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @return int number of products whose sale price is 0
+     */
     public function getNumberOfProductsInCatalog()
     {
         try {
@@ -217,6 +257,15 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $name string name
+     * @param $description string description
+     * @param $file string relative file path
+     * @param $quantity int
+     * @param $price int
+     * @param $salePrice int
+     * @return string message to display if product was successfully added to products table
+     */
     public function addProduct($name, $description, $file, $quantity, $price, $salePrice)
     {
         try {
@@ -232,12 +281,17 @@ class dbMangaStore
                 ':price' => $price,
                 'salePrice' => $salePrice
             ));
-            return "'$name' added successfully.";
+
+            return $this->pdo->lastInsertId();
         } catch (PDOException $e) {
             die();
         }
     }
 
+    /**
+     * @param $name string product name
+     * @return int number of products with the name $name
+     */
     public function getNumberOfProductsWithName($name)
     {
         try {
@@ -250,6 +304,9 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @return int number of products on sale
+     */
     public function getNumberOfProductsOnSale()
     {
         try {
@@ -262,6 +319,9 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @return array of product, with just productName filled up
+     */
     public function getAllProductNames()
     {
         try {
@@ -276,6 +336,10 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $name string product name
+     * @return Product all products with the name $name
+     */
     public function getProductFromName($name)
     {
         try {
@@ -290,6 +354,16 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $oldProductName string old product name
+     * @param $newName string
+     * @param $newDescription string
+     * @param $newImage string file path
+     * @param $newQuantity int
+     * @param $newPrice int
+     * @param $newSalePrice int
+     * @return int number of rows updated
+     */
     public function updateProductInformation($oldProductName, $newName, $newDescription, $newImage, $newQuantity, $newPrice, $newSalePrice)
     {
         try {
@@ -312,6 +386,10 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $productId int product whose quantity has to be reduced by 1 in the products table
+     * @return int number of rows updated
+     */
     public function reduceQuantity($productId)
     {
         try {
@@ -326,6 +404,12 @@ class dbMangaStore
         }
     }
 
+    /**
+     * @param $username string
+     * @param $password string
+     * @param $role int id. (1 for Admin)
+     * @return string last inserted id of user
+     */
     public function addUser($username, $password, $role)
     {
         try {
@@ -345,24 +429,26 @@ class dbMangaStore
 
 }
 
-//$db = new dbMangaStore();
-//$dom = new DOMDocument();
-//$dom->load("input.xml");
-//$articles = $dom->getElementsByTagName("article");
-//$count = 1;
-//foreach ($articles as $article) {
-//    $title = trim($article->getElementsByTagName("h4")->item(0)->nodeValue);
-//    $description = "";
-//    $price = 15;
-//    $quantity = 100;
-//    $imageName = "/PHP-eCommerce-Manga/images/$count.jpg";
-//    $salePrice = 0;
-//
-//    $db->addProduct($title, $description, $price, $quantity, $imageName, $salePrice);
-//    $count += 1;
-//
-//    if ($count > 43) break;
-//}
+/*
+$db = new dbMangaStore();
+$dom = new DOMDocument();
+$dom->load("input.xml");
+$articles = $dom->getElementsByTagName("article");
+$count = 1;
+foreach ($articles as $article) {
+    $title = trim($article->getElementsByTagName("h4")->item(0)->nodeValue);
+    $description = "";
+    $price = 15;
+    $quantity = 100;
+    $imageName = "/images/$count.jpg";
+    $salePrice = 0;
 
-//$db = new dbMangaStore();
-//$db->addUser("root", "root", 1);
+    $db->addProduct($title, $description, $imageName, $price, $quantity, $salePrice);
+    $count += 1;
+
+    if ($count > 43) break;
+}
+
+$db = new dbMangaStore();
+$db->addUser("root", "root", 1);
+*/

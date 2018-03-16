@@ -6,10 +6,10 @@
  * Time: 10:12 PM
  */
 
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Product.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DBHelper.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
+include_once ROOT . "project1/utils/Constants.php";
+include_once ROOT . "project1/utils/Product.php";
+include_once ROOT . "project1/db/DBHelper.php";
+include_once ROOT . "project1/db/DB.MangaStore.class.php";
 
 class LIB_project1
 {
@@ -27,6 +27,9 @@ class LIB_project1
         $this->db = null;
     }
 
+    /**
+     * @return string HTML code for showing all products on sale as a masonry of cards
+     */
     public function getProductsOnSale()
     {
         $products = $this->db->getProductsOnSale();
@@ -41,17 +44,24 @@ class LIB_project1
         return $html;
     }
 
+    /**
+     * @param $page int page number of the index page
+     * @return string HTML code of products in catalog as a masonry of cards.
+     * List of products is limited by a page offset and a limit of Costants::PAGE_SIZE.
+     *
+     * If page number is out of scope, then redirect the application to relevant page
+     */
     public function showProductsInCatalog($page)
     {
         $no_of_products = $this->db->getNumberOfProductsInCatalog();
 
         if ($page < 1) {
             $page = 1;
-            header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
+            header("Location: index.php?page=$page");
             die();
         } else if ((($page - 1) * Constants::PAGE_SIZE) > $no_of_products) {
             $page = ceil($no_of_products / Constants::PAGE_SIZE); // 9
-            header("Location: /PHP-eCommerce-Manga/php/index.php?page=$page");
+            header("Location: index.php?page=$page");
             die();
         }
 
@@ -67,21 +77,42 @@ class LIB_project1
         return $html;
     }
 
+    /**
+     * @param $productId int product id
+     * @param $sid string session id
+     * @return bool true if product was successfully added to cart, false otherwise
+     */
     public function addProductToCart($productId, $sid)
     {
         return $this->dbhelper->addToCart($productId, $sid);
     }
 
+    /**
+     * @param $productId int product id
+     * @return bool true if products quantity was successfully reduced by 1 in the database
+     */
     public function reduceQuantity($productId)
     {
         return $this->dbhelper->reduceQuantity($productId);
     }
 
+    /**
+     * @param $userID string user name
+     * @param $pwd string password
+     * @return bool|string true if user is admin, error message otherwise
+     */
     public function isAdmin($userID, $pwd)
     {
         return $this->dbhelper->isAdmin($userID, $pwd);
     }
 
+    /**
+     * To keep cart life alive.
+     * Needs Cookies enabled by end user.
+     * update $_COOKIE['SID'] and carts table with latest session id by replacing old session id with the new session id
+     *
+     * Life of cookie is 1 month, updated every time the page is loaded.
+     */
     public function onLoad()
     {
         $sid = session_id();
@@ -93,16 +124,24 @@ class LIB_project1
         setcookie('SID', $sid, time() + 60 * 60 * 24 * 30, "/");
     }
 
-    public function isCartEmpty()
+    /**
+     * @param $sid string session id
+     * @return bool true if cart is empty for the given session id, false otherwise
+     */
+    public function isCartEmpty($sid)
     {
-        return $this->dbhelper->isCartEmpty(session_id());
+        return $this->dbhelper->isCartEmpty($sid);
     }
 
-    public function showProductsInCart()
+    /**
+     * @param $sid string session id
+     * @return string HTML code for displaying each product in cart as a row
+     */
+    public function showProductsInCart($sid)
     {
         $rows = "";
         $netSum = 0;
-        $carts = $this->db->getProductsInCart(session_id());
+        $carts = $this->db->getProductsInCart($sid);
 
         foreach ($carts as $product) {
             $rows .= "<tr>";
@@ -140,7 +179,11 @@ class LIB_project1
         return $rows;
     }
 
-    public function showCartTable()
+    /**
+     * @param $sid string session id
+     * @return string HTML code for displaying table headers and table rows of cart
+     */
+    public function showCartTable($sid)
     {
         return "
             <table class='table table-striped'>
@@ -153,11 +196,14 @@ class LIB_project1
                     </tr>
                 </thead>
                 <tbody>"
-            . $this->showProductsInCart() .
+            . $this->showProductsInCart($sid) .
             "</tbody>
             </table>";
     }
 
+    /**
+     * @return string HTML form for the button to clear cart
+     */
     public function showBtnToClearCart()
     {
         return "
@@ -166,46 +212,83 @@ class LIB_project1
             </form>";
     }
 
+    /**
+     * @return bool true if cart items were successfully returned to products table and then deleted from the carts table
+     */
     public function clearCart()
     {
         return $this->dbhelper->clearCart(session_id());
     }
 
+    /**
+     * @return string HTML code to show if the cart is empty
+     */
     public function showEmptyCart()
     {
         return "
             <div class='jumbotron'>
               <h1>Your cart is empty!</h1> 
-              <p>Click <a href='/PHP-eCommerce-Manga/php/index.php'>here</a> to start shopping...</p> 
+              <p>Click <a href='index.php'>here</a> to start shopping...</p> 
             </div>";
     }
 
+    /**
+     * @param $page int page number
+     * @return string HTML pagination code with buttons for previous, current and next page
+     */
     public function showPagination($page)
     {
         return "
             <ul class='pagination justify-content-center'>
-              <li class='page-item'><a class='page-link' href='/PHP-eCommerce-Manga/php/index.php?page=" . ($page - 1) . "'>Previous</a></li>
+              <li class='page-item'><a class='page-link' href='index.php?page=" . ($page - 1) . "'>Previous</a></li>
               <li class='page-item active'><a class='page-link'>$page</a></li>
-              <li class='page-item'><a class='page-link' href='/PHP-eCommerce-Manga/php/index.php?page=" . ($page + 1) . "'>Next</a></li>
+              <li class='page-item'><a class='page-link' href='index.php?page=" . ($page + 1) . "'>Next</a></li>
             </ul>";
     }
 
+    /**
+     * @param $name string
+     * @param $description string
+     * @param $file string file path
+     * @param $quantity int
+     * @param $price int
+     * @param $salePrice int
+     * @return bool true if a new product was successfully added to the products table
+     */
     public function addProduct($name, $description, $file, $quantity, $price, $salePrice)
     {
-        return $this->db->addProduct($name, $description, $file, $quantity, $price, $salePrice);
+        if ($this->db->addProduct($name, $description, $file, $quantity, $price, $salePrice) != -1)
+            return "'$name' added successfully.";
+        else return "Failed to insert '$name'";
     }
 
+    /**
+     * @param $name array of 'status', 'data' and 'error'
+     * @return string HTML code of error message if 'error' has been set, blank otherwise
+     */
     public function getErrorMessage($name)
     {
         if (!empty($name['error'])) return "<div class='invalid-feedback'>{$name['error']}</div>";
         else return "";
     }
 
+    /**
+     * @param $name array of 'status', 'data' and 'error'
+     * @return string CSS class 'is-invalid' if status is false
+     */
     public function getErrorClass($name)
     {
         return isset($name['status']) && $name['status'] ? "" : "is-invalid";
     }
 
+    /**
+     * @param $field string field header name
+     * @param $type string type of field: text, number
+     * @param $obj array of 'status', 'data' and 'error'
+     * @param string $prepend character to be shown as part of input. '$' for example
+     * @param string $value default value
+     * @return string HTML code for the entire element
+     */
     public function showInputFieldAsRow($field, $type, $obj, $prepend = '', $value = '')
     {
         if (isset($obj)) {
@@ -216,7 +299,7 @@ class LIB_project1
             $errorMessage = "";
         }
         return "<div class='form-group row'>
-                     <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
+                     <label for='salePrice' class='col-sm-4 col-form-label'><strong>$field</strong></label>
                      <div class='col-sm-8 input-group mb-2'>"
             . ((isset($prepend) && empty($prepend)) ? "" : "<div class='input-group-prepend'> <div class='input-group-text'>$prepend</div></div>")
             . "<input type='$type' class='form-control $errorClass' 
@@ -226,6 +309,12 @@ class LIB_project1
                   </div>";
     }
 
+    /**
+     * @param $field string field header name
+     * @param $type string type of field: file
+     * @param $obj array of 'status', 'data' and 'error'
+     * @return string HTML code for file element
+     */
     public function showFileFieldAsRow($field, $type, $obj)
     {
         if (isset($obj)) {
@@ -236,7 +325,7 @@ class LIB_project1
             $errorMessage = "";
         }
         return "<div class='form-group row'>
-                     <label for='salePrice' class='col-sm-4 col-form-label'>$field</label>
+                     <label for='salePrice' class='col-sm-4 col-form-label'><strong>$field</strong></label>
                      <div class='col-sm-8 input-group mb-2'>
                         <input type='$type' class='form-control $errorClass' accept='image/*'
                          name='$field' placeholder='$field'>
@@ -245,6 +334,13 @@ class LIB_project1
                   </div>";
     }
 
+    /**
+     * @param $field string field header name
+     * @param $type string type of field: file
+     * @param $obj array of 'status', 'data' and 'error'
+     * @param string $value default value
+     * @return string HTML code for input fields
+     */
     public function showInputFieldVertically($field, $type, $obj = null, $value = '')
     {
         if (isset($obj)) {
@@ -255,7 +351,7 @@ class LIB_project1
             $errorMessage = "";
         }
         return "<div class='form-group'>
-                     <label for='salePrice' class='col-sm-12 col-form-label'>$field</label>
+                     <label for='salePrice' class='col-sm-12 col-form-label'><strong>$field</strong></label>
                      <div class='col-sm-12 input-group mb-2'>
                         <input type='$type' class='form-control $errorClass' 
                          name='$field' placeholder='$field' value='$value' required>
@@ -264,6 +360,12 @@ class LIB_project1
                   </div>";
     }
 
+    /**
+     * @param $field string field header name
+     * @param $obj array of 'status', 'data' and 'error'
+     * @param string $value default value
+     * @return string HTML code for textfield element vertically aligned
+     */
     public function showTextFieldVertically($field, $obj, $value = '')
     {
         if (isset($obj)) {
@@ -274,7 +376,7 @@ class LIB_project1
             $errorMessage = "";
         }
         return "<div class='form-group'>
-                     <label for='description' class='col-sm-12 col-form-label'>$field</label>
+                     <label for='description' class='col-sm-12 col-form-label'><strong>$field</strong></label>
                      <div class='col-sm-12 input-group mb-2'>
                         <textarea class='form-control $errorClass' id='description' name='$field' rows='3'>$value</textarea>
                         $errorMessage
@@ -282,6 +384,10 @@ class LIB_project1
                   </div>";
     }
 
+    /**
+     * @param $option string dropdown option either selected by user or the default one
+     * @return string HTML code for options container DEFAULT_DROPDOWN_OPTION and all product names
+     */
     public function getProductOptions($option)
     {
         $output = "<option value='" . Constants::DEFAULT_DROPDOWN_OPTION . "'>" . Constants::DEFAULT_DROPDOWN_OPTION . "</option>";
@@ -295,19 +401,60 @@ class LIB_project1
         return $output;
     }
 
+    /**
+     * @param $name string product name
+     * @return Product object matched from the given name
+     */
     public function getProductFromName($name)
     {
         return $this->db->getProductFromName($name);
     }
 
+    /**
+     * @param $oldProductName string
+     * @param $newName string
+     * @param $newDescription string
+     * @param $newImage string file path
+     * @param $newQuantity int
+     * @param $newPrice int
+     * @param $newSalePrice int
+     * @return int number of rows updated
+     */
     public function updateProduct($oldProductName, $newName, $newDescription, $newImage, $newQuantity, $newPrice, $newSalePrice)
     {
         return $this->db->updateProductInformation($oldProductName, $newName, $newDescription, $newImage, $newQuantity, $newPrice, $newSalePrice);
     }
 
+    /**
+     * @param $option string dropdown option selected by the user
+     * @return bool true if dropdown option matches DEFAULT_DROPDOWN_OPTION
+     */
     public function isDefaultDropdownOption($option)
     {
         return $option == Constants::DEFAULT_DROPDOWN_OPTION;
     }
 
+    /**
+     * @return string HTML code to show on 404 error
+     */
+    public function show404()
+    {
+        return "
+            <div class='jumbotron'>
+              <h1>Sorry, the page you are looking for could not be found!</h1> 
+              <p>Click <a href='index.php'>here</a> to start shopping...</p> 
+            </div>";
+    }
+
+    /**
+     * @return string HTML code to show on 500 error
+     */
+    public function show500()
+    {
+        return "
+            <div class='jumbotron'>
+              <h1>Oops! Something is wrong with the server!</h1> 
+              <p>Click <a href='index.php'>here</a> to start shopping...</p> 
+            </div>";
+    }
 }

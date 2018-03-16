@@ -6,9 +6,10 @@
  * Time: 10:11 PM
  */
 
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/FormValidator.php";
+define('ROOT', dirname(__DIR__) . '/');
+include_once ROOT . "project1/utils/LIB_project1.php";
+include_once ROOT . "project1/utils/Navigation.php";
+include_once ROOT . "project1/utils/FormValidator.php";
 
 session_start();
 
@@ -16,15 +17,31 @@ $util = new LIB_project1();
 $util->onLoad();
 
 $validator = new FormValidator();
+
+// $option is used for setting the dropdown option for updating a new product
 $option = "";
+
+// $message is a toast message that shows up on loading the page. $message is populated after an action is performed
 $message = "";
 
+/*
+ * Initializing form variable objects with null values.
+ *
+ * Format of the object is
+ * $variable = array(
+ *  'status' => true or false,
+ *  'data' => sanitized input value,
+ *  'error' => message to show if the status is false
+ * )
+ */
 $name = $description = $image = $quantity = $price = $salePrice = null;
 $xname = $xdescription = $ximage = $xquantity = $xprice = $xsalePrice = null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
+    // Adding a new product
     if (isset($_POST['submit']) && $_POST['submit'] == 'Submit') {
+        // Parse all form inputs
         $name = $validator->parseName($_POST['Name']);
         $description = $validator->parseDescription($_POST['Description']);
         $image = $validator->isImage($_FILES['Image']);
@@ -33,9 +50,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $salePrice = $validator->parseSalePrice($_POST['Sale_Price']);
 
         $hasProductWithSameName = $validator->hasProductsWithName($name['data']);
+
         if ($name['status'] && !$hasProductWithSameName && $description['status'] && $quantity['status']
             && $price['status'] && $salePrice['status'] && $image['status']) {
 
+            // Add product to database
             $message = $util->addProduct(
                 $name['data'],
                 $description['data'],
@@ -44,6 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $price['data'],
                 $salePrice['data']);
         } else {
+            // Failed for reasons other than database exception
             if ($hasProductWithSameName) {
                 $message = "Failed: Product with the same name already exists.";
             } else if (!$salePrice['status']) {
@@ -54,11 +74,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 }
             }
         }
+
+    // Updating an old product
     } else if (isset($_POST['submit']) && $_POST['submit'] == 'Update') {
         $xname = $validator->parseName($_POST['Name']);
         $xdescription = $validator->parseDescription($_POST['Description']);
         $ximage = $validator->isImage($_FILES['Image']);
-        if ($ximage['data'] == "http://" . $_SERVER['HTTP_HOST'] . "/PHP-eCommerce-Manga/images/default.png") {
+
+        // If no file has been uploaded than revert to original file.
+        if ($ximage['data'] == "images/123default456.png" && empty($_FILES['Image']['name'])) {
             $ximage['data'] = $_SESSION['oldproduct']->getImageName();
         }
 
@@ -66,6 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $xprice = $validator->parsePrice($_POST['Price']);
         $xsalePrice = $validator->parseSalePrice($_POST['Sale_Price'], $_SESSION['oldproduct']->getSalePrice() > 0);
 
+        // If there is no change in information, then do not attempt to upload
         $oldproduct = $_SESSION['oldproduct'];
         if ($oldproduct->getProductName() == $xname['data'] &&
             $oldproduct->getDescription() == $xdescription['data'] &&
@@ -80,6 +105,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         } else if ($xname['status'] && $xdescription['status'] && $xquantity['status'] &&
             $ximage['status'] && $xprice['status'] && $xsalePrice['status']) {
 
+            // Attempt to update product
             $rowsUpdated = $util->updateProduct($_SESSION['oldproduct']->getProductName(),
                 $xname['data'],
                 $xdescription['data'],
@@ -88,11 +114,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $xprice['data'],
                 $xsalePrice['data']);
 
+            // If there is more than one row being updated, then update $option, $message and Product object in $_SESSION
             if ($rowsUpdated > 0) {
                 $option = $xname['data'];
                 $message = "Updated '$option'!";
                 $_SESSION['oldproduct'] = $util->getProductFromName($option);
 
+            // Revert option to original product name
             } else {
                 $option = $_SESSION['oldproduct']->getProductName();
                 $message = "Failed to update old product.";
@@ -102,6 +130,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             $option = $_SESSION['oldproduct']->getProductName();
             $message = "Please verify the information you have entered.";
         }
+
+    // Show product information chosen from the dropdown
     } else if (isset($_POST['dropdownOptions'])) {
         $option = trim($_POST['dropdownOptions']);
         if (!$util->isDefaultDropdownOption($option)) {
@@ -127,6 +157,7 @@ if ($_SESSION['isAdmin']) {
                <form method='post' action='' enctype='multipart/form-data'>"
         . $util->showInputFieldVertically("Name", "text", $name)
         . $util->showTextFieldVertically("Description", $description)
+        . "<div class='col-sm-12'><small>Supports a maximum of 1000 characters.</small></div>"
         . $util->showFileFieldAsRow("Image", "file", $image)
         . "<div class='col-sm-12'><small>Default image will be used if no image is provided.</small></div>"
         . $util->showInputFieldAsRow("Quantity", "number", $quantity)
@@ -150,6 +181,7 @@ if ($_SESSION['isAdmin']) {
             "<form method='post' action='' enctype='multipart/form-data'>"
             . $util->showInputFieldVertically("Name", "text", $xname, $_SESSION['oldproduct']->getProductName())
             . $util->showTextFieldVertically("Description", $xdescription, $_SESSION['oldproduct']->getDescription())
+            . "<div class='col-sm-12'><small>Supports a maximum of 1000 characters.</small></div>"
             . $util->showFileFieldAsRow("Image", "file", $ximage)
             . "<div class='col-sm-12'><small>Original image will be used if no image is provided.</small></div>"
             . $util->showInputFieldAsRow("Quantity", "number", $xquantity, '', $_SESSION['oldproduct']->getQuantity())
@@ -167,11 +199,11 @@ if ($_SESSION['isAdmin']) {
 </div>";
 
 } else {
-    echo Navigation::header("Login");
     header("Location: login.php");
     die();
 }
 
+// Show a toast if $message has been populated
 if (isset($message) && !empty($message)) {
     echo "<div id='snackbar'>$message</div>";
     echo "<script type='text/javascript'> toast(); </script>";

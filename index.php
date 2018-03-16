@@ -6,16 +6,17 @@
  * Time: 10:11 PM
  */
 
-include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Navigation.php";
-include $_SERVER['DOCUMENT_ROOT'] . "/php/utils/LIB_project1.php";
-
 session_start();
+
+define('ROOT', dirname(__DIR__) . '/');
+include_once "utils/Navigation.php";
+include_once "utils/LIB_project1.php";
 
 $util = new LIB_project1();
 $util->onLoad();
 
 if (isset($_POST['addToCart'])) {
-    $isUpdated = $util->addProductToCart($_POST['addToCart'], $_COOKIE['SID']);
+    $isUpdated = $util->addProductToCart($_POST['addToCart'], session_id());
     if ($isUpdated) {
         $util->reduceQuantity($_POST['addToCart']);
     }
@@ -34,15 +35,17 @@ echo "
     <div class='col-md-10'>
         <div class='py-5'>
                 <h3>SALE!</h3>"
-            . $util->getProductsOnSale() .
-        "</div>
+    // Get products currently on sale
+    . $util->getProductsOnSale() .
+    "</div>
              <hr>
         <div>
             <h3>Other Mangas in Catalog!</h3>"
-            . $util->showPagination($page)
-            . $util->showProductsInCatalog($page)
-            . $util->showPagination($page)
-            . "</div>
+    // Show pagination and products in catalog
+    . $util->showPagination($page)
+    . $util->showProductsInCatalog($page)
+    . $util->showPagination($page)
+    . "</div>
     </div>
     <div class='col-md-1'></div>
 </div>";

@@ -6,13 +6,18 @@
  * Time: 5:28 PM
  */
 
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DBHelper.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
+include_once ROOT . "project1/db/DBHelper.php";
+include_once ROOT . "project1/utils/Constants.php";
 
 class FormValidator extends DBHelper
 {
 
-    public function parseUsername($input){
+    /**
+     * @param $input string username while creating user
+     * @return array of 'status' (true or false), 'data' (sanitized $input) and 'error' (message if status is false)
+     */
+    public function parseUsername($input)
+    {
         $input = FormValidator::sanitize($input);
         $data = array();
         $data['status'] = !empty($input);
@@ -28,7 +33,12 @@ class FormValidator extends DBHelper
         return $data;
     }
 
-    public function parsePassword($input){
+    /**
+     * @param $input string password to be valid string
+     * @return array of 'status' (true or false), 'data' (sanitized $input) and 'error' (message if status is false)
+     */
+    public function parsePassword($input)
+    {
         $input = FormValidator::sanitize($input);
         $data = array();
         $data['status'] = !empty($input);
@@ -44,6 +54,10 @@ class FormValidator extends DBHelper
         return $data;
     }
 
+    /**
+     * @param $input string product name set in add or update form
+     * @return array of 'status' (true or false), 'data' (sanitized $input) and 'error' (message if status is false)
+     */
     public function parseName($input)
     {
         $input = FormValidator::sanitize($input);
@@ -61,27 +75,39 @@ class FormValidator extends DBHelper
         return $data;
     }
 
+    /**
+     * @param $input string description set in add or update form
+     * @return array of 'status' (true or false), 'data' (sanitized $input) and 'error' (message if status is false).
+     * Data trimmed to length of 1000
+     */
     public function parseDescription($input)
     {
         $input = FormValidator::sanitize($input);
         $data = array();
         $data['status'] = true;
-        $data['data'] = $input;
+        $data['data'] = mb_strimwidth($input, 0, 1003, "...");
         $data['error'] = "";
         return $data;
     }
 
+    /**
+     * @param $input string file path set in add or update form
+     * @return array of 'status' (true or false), 'data' (sanitized $input) and 'error' (message if status is false).
+     * Status is true if (1) image has accepted extension, (2) acceptable size, (3) acceptable mime typeand (4) has been moved to project folder
+     */
     public function isImage($input)
     {
         $data = array();
 
         if (!isset($input['name']) || empty($input['name'])) {
             $data['status'] = true;
-            $data['data'] = "http://" . $_SERVER['HTTP_HOST'] . "/PHP-eCommerce-Manga/images/default.png";
+            $data['data'] = "images/123default456.png";
             $data['error'] = "";
         } else {
-            $target_dir = $_SERVER['DOCUMENT_ROOT'] . "/images/";
-            $target_file = $target_dir . basename($input['name']);
+            $file = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', basename($input['name']));
+            $file = mb_ereg_replace("([\.]{2,})", '', $file);
+            $target_dir = ROOT . "project1/images/";
+            $target_file = $target_dir . $file;
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
             $imageSize = getimagesize($input['tmp_name']);
 
@@ -89,7 +115,7 @@ class FormValidator extends DBHelper
                 $input['size'] < 5000000 &&
                 in_array($imageSize['mime'], Constants::IMAGE_TYPES) &&
                 move_uploaded_file($input["tmp_name"], $target_file);
-            $data['data'] = "http://" . $_SERVER['HTTP_HOST'] . "/PHP-eCommerce-Manga/images/" . basename($input['name']);
+            $data['data'] = "images/" . basename($input['name']);
             $data['error'] = "";
             if (!$data['status']) {
                 if (!in_array($imageFileType, Constants::IMAGE_EXTENSIONS)) {
@@ -107,6 +133,10 @@ class FormValidator extends DBHelper
         return $data;
     }
 
+    /**
+     * @param $input int quantity set in add or update form
+     * @return array of 'status' (true or false), 'data' (sanitized $input) and 'error' (message if status is false)
+     */
     public function parseQuantity($input)
     {
         $input = FormValidator::sanitize($input);
@@ -125,6 +155,10 @@ class FormValidator extends DBHelper
         return $data;
     }
 
+    /**
+     * @param $input int price set in add or update form
+     * @return array of 'status' (true or false), 'data' (sanitized $input) and 'error' (message if status is false)
+     */
     public function parsePrice($input)
     {
         $input = FormValidator::sanitize($input);
@@ -143,6 +177,11 @@ class FormValidator extends DBHelper
         return $data;
     }
 
+    /**
+     * @param $input int sale price set in add or update form. Set to 0 if empty.
+     * @param bool $isAlreadyOnSale false by default
+     * @return array of 'status' (true or false), 'data' (sanitized $input) and 'error' (message if status is false)
+     */
     public function parseSalePrice($input, $isAlreadyOnSale = false)
     {
         $input = FormValidator::sanitize($input);
@@ -166,6 +205,10 @@ class FormValidator extends DBHelper
         return $data;
     }
 
+    /**
+     * @param $var string sent by user
+     * @return string sanitized string
+     */
     private static function sanitize($var)
     {
         $var = trim($var);

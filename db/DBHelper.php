@@ -6,9 +6,9 @@
  * Time: 5:28 PM
  */
 
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/User.php";
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/db/DB.MangaStore.class.php";
+include_once ROOT . "project1/utils/Constants.php";
+include_once ROOT . "project1/utils/User.php";
+include_once ROOT . "project1/db/DB.MangaStore.class.php";
 
 class DBHelper
 {
@@ -20,28 +20,43 @@ class DBHelper
         $this->db = new dbMangaStore();
     }
 
+    /**
+     * @return bool true if number of products on sale is less than 5, false otherwise
+     */
     public function canSaleMoreProducts()
     {
         return $this->db->getNumberOfProductsOnSale() < 5;
     }
 
+    /**
+     * @return bool true if number of products on sale is more than 3, false otherwise
+     */
     public function canSaleFewerProducts()
     {
         return $this->db->getNumberOfProductsOnSale() > 3;
     }
 
+    /**
+     * @param $name string name of the product
+     * @return bool true if there is at least one product with the name $name
+     */
     public function hasProductsWithName($name)
     {
         return $this->db->getNumberOfProductsWithName($name) > 0;
     }
 
+    /**
+     * @param $username string
+     * @param $password string
+     * @return bool|string bool true if user is indeed an admin, string if not along with relevant information
+     */
     public function isAdmin($username, $password)
     {
         $user = $this->db->getUser($username);
 
         if (isset($user) && !empty($user)) {
             if (password_verify($password, $user->getPassword())) {
-                if ($user->isAdmin()) {
+                if ($user->getRole() == Constants::ROLE_ADMIN) {
                     return true;
                 } else {
                     return "User is not an Admin";
@@ -54,6 +69,12 @@ class DBHelper
         }
     }
 
+    /**
+     * @param $productId int
+     * @param $sid string session id
+     * @return bool true if at least one product in cart was successfully updated or a new entry in the cart was inserted.
+     * false otherwise
+     */
     public function addToCart($productId, $sid)
     {
         $item = $this->db->getCartItem($productId, $sid);
@@ -64,19 +85,31 @@ class DBHelper
         }
     }
 
+    /**
+     * @param $productId int
+     * @return bool if exactly one product's quantity was reduced by 1
+     */
     public function reduceQuantity($productId)
     {
         return $this->db->reduceQuantity($productId) == 1;
     }
 
+    /**
+     * @param $sessionID string session id
+     * @return bool true if there is no item in cart for the given session id, false other wise
+     */
     public function isCartEmpty($sessionID)
     {
         return $this->db->getNumberOfProductsInCart($sessionID) == 0;
     }
 
+    /**
+     * @param $session_id string session id
+     * @return bool true if atleast one product was deleted from the cart
+     */
     public function clearCart($session_id)
     {
         $this->db->refillProductsQuantityFromCart($session_id);
-        return $this->db->removeProductsFromCart($session_id);
+        return $this->db->removeProductsFromCart($session_id) > 0;
     }
 }

@@ -6,14 +6,14 @@
  * Time: 12:47 AM
  */
 
-include_once $_SERVER['DOCUMENT_ROOT'] . "/php/utils/Constants.php";
+include_once ROOT. "project1/utils/Constants.php";
 
 class User
 {
     private $username, $password, $role;
 
-    public function isAdmin(){
-        return $this->role == Constants::ROLE_ADMIN;
+    public function getRole(){
+        return $this->role;
     }
 
     public function getPassword(){

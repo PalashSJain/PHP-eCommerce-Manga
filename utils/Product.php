@@ -11,7 +11,7 @@ class Product
     private $productID, $productName, $description, $price, $quantity, $imageName, $salePrice;
 
     /**
-     * @return mixed
+     * @return String product name
      */
     public function getProductName(): string
     {
@@ -19,7 +19,7 @@ class Product
     }
 
     /**
-     * @return mixed
+     * @return String description
      */
     public function getDescription(): string
     {
@@ -27,7 +27,7 @@ class Product
     }
 
     /**
-     * @return mixed
+     * @return int price
      */
     public function getPrice(): int
     {
@@ -35,7 +35,7 @@ class Product
     }
 
     /**
-     * @return int
+     * @return int quantity
      */
     public function getQuantity(): int
     {
@@ -43,7 +43,7 @@ class Product
     }
 
     /**
-     * @return string
+     * @return string file path
      */
     public function getImageName(): string
     {
@@ -51,13 +51,16 @@ class Product
     }
 
     /**
-     * @return int
+     * @return int sale price
      */
     public function getSalePrice(): int
     {
         return $this->salePrice;
     }
 
+    /**
+     * @return string html card for product information along with submit button
+     */
     public function makeHTMLCode()
     {
         return
@@ -70,7 +73,7 @@ class Product
                     <h4 class='card-title'>{$this->getProductName()}</h4>
                     <p class='card-text'>{$this->getDescription()}</p>
                     <p class='card-text'>"
-            . $this->getPriceToShow($this->getSalePrice(), $this->getPrice())
+            . $this->getPriceToShow()
             . "</p>
                     <p class='card-text'>Quantity left: 
                     " . $this->getQuantity() . "
@@ -83,8 +86,11 @@ class Product
             </div>";
     }
 
-    private function getPriceToShow($salePrice, $origPrice)
+    /**
+     * @return string "Price: " + sale price or original price
+     */
+    private function getPriceToShow()
     {
-        return ($salePrice == 0) ? "Price: \$$origPrice" : "Price: <s>\$$origPrice</s> \$$salePrice";
+        return ($this->salePrice == 0) ? "Price: \$$this->price" : "Price: <s>\$$this->price</s> \$$this->salePrice";
     }
 }
