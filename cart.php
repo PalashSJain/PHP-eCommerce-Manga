@@ -6,9 +6,9 @@
  * Time: 10:11 PM
  */
 
-define('ROOT', dirname(__DIR__) . '/');
-include_once ROOT . "project1/utils/Navigation.php";
-include_once ROOT . "project1/utils/LIB_project1.php";
+define('ROOT', dirname(__DIR__) . '/PHP-eCommerce-Manga/');
+include_once ROOT . "utils/Navigation.php";
+include_once ROOT . "utils/LIB_project1.php";
 
 session_start();
 

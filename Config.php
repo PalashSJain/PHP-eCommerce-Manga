@@ -6,4 +6,4 @@
  * Time: 5:26 PM
  */
 
-define('ROOT', __DIR__ . "/");
+define('ROOT', dirname(__DIR__) . '/PHP-eCommerce-Manga/');

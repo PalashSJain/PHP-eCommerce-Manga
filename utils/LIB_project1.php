@@ -6,10 +6,10 @@
  * Time: 10:12 PM
  */
 
-include_once ROOT . "project1/utils/Constants.php";
-include_once ROOT . "project1/utils/Product.php";
-include_once ROOT . "project1/db/DBHelper.php";
-include_once ROOT . "project1/db/DB.MangaStore.class.php";
+include_once ROOT . "utils/Constants.php";
+include_once ROOT . "utils/Product.php";
+include_once ROOT . "db/DBHelper.php";
+include_once ROOT . "db/DB.MangaStore.class.php";
 
 class LIB_project1
 {

@@ -8,9 +8,9 @@
 
 session_start();
 
-define('ROOT', dirname(__DIR__) . '/');
-include ROOT . "project1/utils/Navigation.php";
-include ROOT . "project1/utils/LIB_project1.php";
+define('ROOT', dirname(__DIR__) . '/PHP-eCommerce-Manga/');
+include ROOT . "utils/Navigation.php";
+include ROOT . "utils/LIB_project1.php";
 
 $util = new LIB_project1();
 $util->onLoad();

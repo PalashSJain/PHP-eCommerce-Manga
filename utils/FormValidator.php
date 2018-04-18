@@ -6,8 +6,8 @@
  * Time: 5:28 PM
  */
 
-include_once ROOT . "project1/db/DBHelper.php";
-include_once ROOT . "project1/utils/Constants.php";
+include_once ROOT . "db/DBHelper.php";
+include_once ROOT . "utils/Constants.php";
 
 class FormValidator extends DBHelper
 {
@@ -106,7 +106,7 @@ class FormValidator extends DBHelper
         } else {
             $file = mb_ereg_replace("([^\w\s\d\-_~,;\[\]\(\).])", '', basename($input['name']));
             $file = mb_ereg_replace("([\.]{2,})", '', $file);
-            $target_dir = ROOT . "project1/images/";
+            $target_dir = ROOT . "images/";
             $target_file = $target_dir . $file;
             $imageFileType = strtolower(pathinfo($target_file, PATHINFO_EXTENSION));
             $imageSize = getimagesize($input['tmp_name']);

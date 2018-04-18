@@ -8,7 +8,7 @@
 
 session_start();
 
-define('ROOT', dirname(__DIR__) . '/');
+define('ROOT', dirname(__DIR__) . '/PHP-eCommerce-Manga/');
 include_once "utils/Navigation.php";
 include_once "utils/LIB_project1.php";
 

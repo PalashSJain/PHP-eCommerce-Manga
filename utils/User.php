@@ -6,7 +6,7 @@
  * Time: 12:47 AM
  */
 
-include_once ROOT. "project1/utils/Constants.php";
+include_once ROOT. "utils/Constants.php";
 
 class User
 {

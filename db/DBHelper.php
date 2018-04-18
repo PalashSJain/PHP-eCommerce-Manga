@@ -6,9 +6,9 @@
  * Time: 5:28 PM
  */
 
-include_once ROOT . "project1/utils/Constants.php";
-include_once ROOT . "project1/utils/User.php";
-include_once ROOT . "project1/db/DB.MangaStore.class.php";
+include_once ROOT . "utils/Constants.php";
+include_once ROOT . "utils/User.php";
+include_once ROOT . "db/DB.MangaStore.class.php";
 
 class DBHelper
 {

@@ -8,10 +8,10 @@
 
 session_start();
 
-define('ROOT', dirname(__DIR__) . '/');
-include ROOT . "project1/utils/Navigation.php";
-include ROOT . "project1/utils/LIB_project1.php";
-include ROOT . "project1/utils/FormValidator.php";
+define('ROOT', dirname(__DIR__) . '/PHP-eCommerce-Manga/');
+include ROOT . "utils/Navigation.php";
+include ROOT . "utils/LIB_project1.php";
+include ROOT . "utils/FormValidator.php";
 
 if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) {
     header("Location: admin.php");

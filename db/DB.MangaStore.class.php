@@ -6,9 +6,9 @@
  * Time: 10:12 PM
  */
 
-include_once ROOT . "project1/utils/Product.php";
-include_once ROOT . "project1/utils/User.php";
-include_once ROOT . "project1/utils/Cart.php";
+include_once ROOT . "utils/Product.php";
+include_once ROOT . "utils/User.php";
+include_once ROOT . "utils/Cart.php";
 
 class dbMangaStore
 {
@@ -18,9 +18,10 @@ class dbMangaStore
     function __construct()
     {
         try {
-            $this->pdo = new PDO("mysql:host={$_SERVER['DB_SERVER']};dbname={$_SERVER['DB']}", $_SERVER['DB_USER'], $_SERVER['DB_PASSWORD']);
+            $this->pdo = new PDO("mysql:host=localhost;dbname=mangastore", 'root', '');
             $this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
         } catch (PDOException $e) {
+            var_dump($e->getMessage());
             die();
         }
     }
