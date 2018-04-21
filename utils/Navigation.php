@@ -66,13 +66,14 @@ class Navigation
 <nav class='navbar navbar-expand-sm navbar-light'>
   <a class='navbar-brand' href='/index.php'>Manga Store</a>
   <div class='navbar-collapse' id='navbarSupportedContent'>
-    <ul class='navbar-nav ml-auto'>
-      <li class='nav-item " . ($currentPage == 'Home' ? 'active' : '') . "'><a class='nav-link' href='index.php'>Home</a></li>
-      <li class='nav-item " . ($currentPage == 'Cart' ? 'active' : '') . "'><a class='nav-link' href='cart.php'>Cart</a></li>
-      <li class='nav-item " . ($currentPage == 'Admin' ? 'active' : '') . "'><a class='nav-link' href='admin.php'>Admin</a></li>"
-            . (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] ?
-                "<li class='nav-item " . ($currentPage == 'Admin' ? 'active' : '') . "'><a class='nav-link' href='logout.php'>Logout</a></li>"
-                : "")
+    <ul class='navbar-nav ml-auto'>" .
+            ((isset($_SESSION['isUser']) && $_SESSION['isUser']) ?
+                "<li class='nav-item " . ($currentPage == 'Home' ? 'active' : '') . "'><a class='nav-link' href='index.php'>Home</a></li>
+            <li class='nav-item " . ($currentPage == 'Cart' ? 'active' : '') . "'><a class='nav-link' href='cart.php'>Cart</a></li>
+            <li class='nav-item " . ($currentPage == 'Admin' ? 'active' : '') . "'><a class='nav-link' href='logout.php'>Logout</a></li>" : "")
+            . ((isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) ? "
+            <li class='nav-item " . ($currentPage == 'Admin' ? 'active' : '') . "'><a class='nav-link' href='admin.php'>Admin</a></li>
+            <li class='nav-item " . ($currentPage == 'Admin' ? 'active' : '') . "'><a class='nav-link' href='logout.php'>Logout</a></li>" : "")
             . "</ul>
   </div>
 </nav>

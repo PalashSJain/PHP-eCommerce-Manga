@@ -31,4 +31,5 @@ class Constants{
      * ROLE ID for Different types of users. Currently, only ADMIN is supported
      */
     const ROLE_ADMIN = 1;
+    const ROLE_USER = 2;
 }

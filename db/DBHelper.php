@@ -59,7 +59,26 @@ class DBHelper
                 if ($user->getRole() == Constants::ROLE_ADMIN) {
                     return true;
                 } else {
-                    return "User is not an Admin";
+                    return "Attempt for unauthorized Access!";
+                }
+            } else {
+                return "Incorrect password for this user.";
+            }
+        } else {
+            return "User with this ID does not exist.";
+        }
+    }
+
+    public function isUser($username, $password)
+    {
+        $user = $this->db->getUser($username);
+
+        if (isset($user) && !empty($user)) {
+            if (password_verify($password, $user->getPassword())) {
+                if ($user->getRole() == Constants::ROLE_USER) {
+                    return true;
+                } else {
+                    return "Attempt for unauthorized Access!";
                 }
             } else {
                 return "Incorrect password for this user.";
@@ -112,4 +131,5 @@ class DBHelper
         $this->db->refillProductsQuantityFromCart($session_id);
         return $this->db->removeProductsFromCart($session_id) > 0;
     }
+
 }

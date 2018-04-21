@@ -452,4 +452,5 @@ foreach ($articles as $article) {
 
 $db = new dbMangaStore();
 $db->addUser("root", "root", 1);
+$db->addUser("palash", "palash", 2);
 */

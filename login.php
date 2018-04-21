@@ -16,7 +16,11 @@ include ROOT . "utils/FormValidator.php";
 if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) {
     header("Location: admin.php");
     die();
+} else if (isset($_SESSION['isUser']) && $_SESSION['isUser']) {
+    header("Location: index.php");
+    die();
 }
+
 
 $util = new LIB_project1();
 $validator = new FormValidator();
@@ -31,18 +35,30 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($userID['status'] && $password['status']) {
         $isAdmin = $util->isAdmin($userID['data'], $password['data']);
         if ($isAdmin === true) {
-
             // restart session if admin logged in
             session_unset();
             session_destroy();
             session_start();
-            $_SESSION['isAdmin'] = true;
+            $_SESSION['isAdmin'] = $isAdmin;
+            $_SESSION['isUser'] = false;
 
             // Go to admin.php if successfully logged in
             header("Location: admin.php");
             die();
         }
-        $message = $isAdmin;
+        $isUser = $util->isUser($userID['data'], $password['data']);
+        if ($isUser === true) {
+            session_unset();
+            session_destroy();
+            session_start();
+            $_SESSION['isUser'] = $isUser;
+            $_SESSION['isAdmin'] = false;
+
+            // Go to admin.php if successfully logged in
+            header("Location: index.php");
+            die();
+        }
+        $message = $isUser;
     } else {
         if (!$userID['status']) {
             $message = $userID['error'];
@@ -52,19 +68,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
 }
 
-echo Navigation::header("Admin");
+echo Navigation::header("Login");
 echo "<div class='container py-5'>
     <div class='row'>
         <div class='col-md-6 mx-auto'>
             <div class='card rounded-0'>
                 <div class='card-header'>
-                    <h3 class='mb-0'>Admin Login</h3>
+                    <h3 class='mb-0'>Admin/User Login</h3>
                 </div>
                 <div class='card-body'>
                     <form class='form' role='form' autocomplete='off' id='adminLogin' novalidate='' method='POST' action=''>"
-    . $util->showInputFieldVertically('User ID', 'text')
-    . $util->showInputFieldVertically('Password', 'password')
-    . "<button type='submit' class='btn btn-success btn-lg float-right' id='btnLogin'>Login</button>
+                    . $util->showInputFieldVertically('User ID', 'text')
+                    . $util->showInputFieldVertically('Password', 'password')
+                    . "<button type='submit' class='btn btn-success btn-lg float-right' id='btnLogin'>Login</button>
                     </form>
                 </div>
             </div>

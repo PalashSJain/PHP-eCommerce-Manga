@@ -106,6 +106,11 @@ class LIB_project1
         return $this->dbhelper->isAdmin($userID, $pwd);
     }
 
+    public function isUser($userID, $pwd)
+    {
+        return $this->dbhelper->isUser($userID, $pwd);
+    }
+
     /**
      * To keep cart life alive.
      * Needs Cookies enabled by end user.
@@ -457,4 +462,5 @@ class LIB_project1
               <p>Click <a href='index.php'>here</a> to start shopping...</p> 
             </div>";
     }
+
 }
