@@ -143,6 +143,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_SESSION['oldproduct'] = null;
 }
 
+if (isset($_SESSION['isUser']) && $_SESSION['isUser']) {
+    header("Location: logout.php");
+    die();
+}
+
 if ($_SESSION['isAdmin']) {
     echo Navigation::header("Logout");
 

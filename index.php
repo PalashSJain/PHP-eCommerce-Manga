@@ -15,6 +15,14 @@ include_once "utils/LIB_project1.php";
 $util = new LIB_project1();
 $util->onLoad();
 
+if (!isset($_SESSION['isUser']) && !$_SESSION['isUser']) {
+    header("Location: logout.php");
+    die();
+} else if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) {
+    header("Location: logout.php");
+    die();
+}
+
 if (isset($_POST['addToCart'])) {
     $isUpdated = $util->addProductToCart($_POST['addToCart'], session_id());
     if ($isUpdated) {

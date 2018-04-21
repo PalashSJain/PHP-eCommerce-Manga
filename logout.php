@@ -11,5 +11,6 @@ session_destroy();
 session_start();
 
 $_SESSION['isAdmin'] = false;
+$_SESSION['isUser'] = false;
 header("Location: login.php");
 die();

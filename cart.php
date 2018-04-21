@@ -20,6 +20,14 @@ if (isset($_POST['clearCart'])) {
     $util->clearCart();
 }
 
+if (!isset($_SESSION['isUser']) && !$_SESSION['isUser']) {
+    header("Location: logout.php");
+    die();
+} else if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) {
+    header("Location: logout.php");
+    die();
+}
+
 echo Navigation::header("Cart");
 
 echo "<div class='py-5'>";
