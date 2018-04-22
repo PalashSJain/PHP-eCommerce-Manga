@@ -15,8 +15,37 @@ class Navigation
     static function header($currentPage)
     {
         return "<html>"
-            . Navigation::getHead()
-            . "<body>"
+            . Navigation::getHead($currentPage)
+            . "<body>
+            <div class='modal fade' id='inactivityModal' data-keyboard='false' data-backdrop='static' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+              <div class='modal-dialog' role='document'>
+                <div class='modal-content'>
+                  <div class='modal-header'>
+                    <h5 class='modal-title' id='exampleModalLabel'>Inactive for more than a minute!</h5>
+                  </div>
+                  <div class='modal-body'>
+                    You are being logged out because you have been inactive for more than a minute. Your unsaved activity will be lost.
+                  </div>
+                  <div class='modal-footer'>
+                    <button type='button' class='btn btn-warning' onclick='window.location.href=\"logout.php\"'>Logout</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            
+            <div class='modal fade' id='warningModal' data-keyboard='false' data-backdrop='static' tabindex='-1' role='dialog' aria-labelledby='exampleModalLabel' aria-hidden='true'>
+              <div class='modal-dialog' role='document'>
+                <div class='modal-content'>
+                  <div class='modal-header'>
+                    <h5 class='modal-title' id='exampleModalLabel'>Inactive for more than 30 seconds!</h5>
+                  </div>
+                  <div class='modal-body'>
+                    You will be logged out if you are inactive for a minute!
+                  </div>
+                </div>
+              </div>
+            </div>
+            "
             . Navigation::getNavbar($currentPage);
     }
 
@@ -35,7 +64,7 @@ class Navigation
     /**
      * @return string header with DOCTYPE, head elment, css stylesheets, js scripts and script methods
      */
-    private static function getHead()
+    private static function getHead($currentPage)
     {
         return "<!DOCTYPE html>
 <head>
@@ -51,8 +80,46 @@ class Navigation
             x.className = 'show';
             setTimeout(function(){ x.className = x.className.replace('show', ''); }, 3000);
         }
-    </script>
-</head>";
+    </script>"
+. ((isset($currentPage) && $currentPage != "Login") ?
+    "<script type='text/javascript'>
+        var isIdle = false;
+        var warningInterval, idleInterval;
+        $(document).ready(function () {
+            warningInterval = setInterval(warningMessage, 30000);
+            idleInterval = setInterval(timerIncrement, 60000); // 1 minute
+            $(this).mousemove(function (e) {
+                if (!isIdle) {
+                    clearInterval(warningInterval);
+                    clearInterval(idleInterval);
+                    $('#warningModal').modal('hide');
+                    warningInterval = setInterval(warningMessage, 30000);
+                    idleInterval = setInterval(timerIncrement, 60000);
+                }
+            });
+            $(this).keypress(function (e) {
+                if (!isIdle) {
+                    clearInterval(warningInterval);
+                    clearInterval(idleInterval);
+                    $('#warningModal').modal('hide');
+                    warningInterval = setInterval(warningMessage, 30000);
+                    idleInterval = setInterval(timerIncrement, 60000);
+                }
+            });
+        });
+        function timerIncrement() {
+            clearInterval(warningInterval);
+            clearInterval(idleInterval);
+            $('#warningModal').modal('hide');
+            $('#inactivityModal').modal('show');
+            isIdle = true;
+        }
+        function warningMessage() {
+            clearInterval(warningInterval);
+            $('#warningModal').modal('show');
+        }
+    </script>" : "")
+. "</head>";
 
     }
 
@@ -79,4 +146,5 @@ class Navigation
 </nav>
 </div>";
     }
+
 }
