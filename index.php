@@ -15,10 +15,10 @@ include_once "utils/LIB_project1.php";
 $util = new LIB_project1();
 $util->onLoad();
 
-if (isset($_SESSION['isUser']) || empty($_SESSION['isUser']) || $_SESSION['isUser'] !== true) {
+if (!isset($_SESSION['isUser']) && empty($_SESSION['isUser']) && $_SESSION['isUser'] !== true) {
     header("Location: logout.php");
     die();
-} else if (isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== false) {
+} else if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] !== false) {
     header("Location: logout.php");
     die();
 }

@@ -15,17 +15,17 @@ session_start();
 $util = new LIB_project1();
 $util->onLoad();
 
+if (!isset($_SESSION['isUser']) && empty($_SESSION['isUser']) && $_SESSION['isUser'] !== true) {
+    header("Location: logout.php");
+    die();
+} else if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] !== false) {
+    header("Location: logout.php");
+    die();
+}
+
 // Clear cart if requested by the user
 if (isset($_POST['clearCart'])) {
     $util->clearCart();
-}
-
-if (isset($_SESSION['isUser']) || empty($_SESSION['isUser']) || $_SESSION['isUser'] !== true) {
-    header("Location: logout.php");
-    die();
-} else if (isset($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== false) {
-    header("Location: logout.php");
-    die();
 }
 
 echo Navigation::header("Cart");

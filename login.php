@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_unset();
             session_destroy();
             session_start();
-            $_SESSION['isAdmin'] = $isAdmin;
+            $_SESSION['isAdmin'] = true;
             $_SESSION['isUser'] = false;
 
             // Go to admin.php if successfully logged in
@@ -51,7 +51,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_unset();
             session_destroy();
             session_start();
-            $_SESSION['isUser'] = $isUser;
+            $_SESSION['isUser'] = true;
             $_SESSION['isAdmin'] = false;
 
             // Go to admin.php if successfully logged in

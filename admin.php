@@ -16,10 +16,10 @@ session_start();
 $util = new LIB_project1();
 $util->onLoad();
 
-if (isset($_SESSION['isAdmin']) || empty($_SESSION['isAdmin']) || $_SESSION['isAdmin'] !== true) {
+if (isset($_SESSION['isAdmin']) && empty($_SESSION['isAdmin']) && $_SESSION['isAdmin'] !== true) {
     header("Location: logout.php");
     die();
-} else if (isset($_SESSION['isUser']) || $_SESSION['isUser'] !== false) {
+} else if (isset($_SESSION['isUser']) && $_SESSION['isUser'] !== false) {
     header("Location: logout.php");
     die();
 }
