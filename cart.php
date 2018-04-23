@@ -20,6 +20,13 @@ if (!isset($_SESSION['user']) || !$_SESSION['user']->isUser()) {
     die();
 }
 
+$user = $_SESSION['user'];
+if (time() - $user->getLastSeen() > 15) {
+    header("Location: logout.php");
+    die();
+}
+$user->setLastSeen(time());
+
 // Clear cart if requested by the user
 if (isset($_POST['clearCart'])) {
     $util->clearCart();

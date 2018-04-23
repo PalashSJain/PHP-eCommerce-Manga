@@ -38,12 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_unset();
             session_destroy();
             session_start();
+            $user->setLastSeen(time());
+            $_SESSION['user'] = $user;
             if ($user->isAdmin()) {
-                $_SESSION['user'] = $user;
                 header("Location: admin.php");
                 die();
             } else if ($user->isUser()) {
-                $_SESSION['user'] = $user;
                 header("Location: index.php");
                 die();
             } else {

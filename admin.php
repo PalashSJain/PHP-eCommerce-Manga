@@ -21,6 +21,13 @@ if (!isset($_SESSION['user']) || !$_SESSION['user']->isAdmin()) {
     die();
 }
 
+$user = $_SESSION['user'];
+if (time() - $user->getLastSeen() > 15) {
+    header("Location: logout.php");
+    die();
+}
+$user->setLastSeen(time());
+
 $validator = new FormValidator();
 
 // $option is used for setting the dropdown option for updating a new product

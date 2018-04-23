@@ -10,7 +10,7 @@ include_once ROOT. "utils/Constants.php";
 
 class User
 {
-    private $username, $password, $role;
+    private $username, $password, $role, $lastSeen;
 
     public function getRole(){
         return $this->role;
@@ -27,5 +27,16 @@ class User
     public function isUser(){
         return $this->getRole() == Constants::ROLE_USER;
     }
+
+    public function getLastSeen()
+    {
+        return $this->lastSeen;
+    }
+
+    public function setLastSeen($lastSeen): void
+    {
+        $this->lastSeen = $lastSeen;
+    }
+
 
 }

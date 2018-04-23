@@ -70,7 +70,7 @@ class Navigation
 <head>
     <link rel='stylesheet' href='css/bootstrap.min.css'>
     <link rel='stylesheet' href='css/styles.css'>
-    <script src='js/jquery-3.2.1.slim.min.js'></script>
+    <script src='https://code.jquery.com/jquery-3.3.1.js' integrity='sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=' crossorigin='anonymous'></script>
     <script src='js/popper.min.js'></script>
     <script src='js/bootstrap.min.js'></script>
     
@@ -86,6 +86,7 @@ class Navigation
         var isIdle = false;
         var warningInterval, idleInterval;
         $(document).ready(function () {
+            setInterval(checkLastSeen, 5000);
             warningInterval = setInterval(warningMessage, 30000);
             idleInterval = setInterval(timerIncrement, 60000); // 1 minute
             $(this).mousemove(function (e) {
@@ -117,6 +118,20 @@ class Navigation
         function warningMessage() {
             clearInterval(warningInterval);
             $('#warningModal').modal('show');
+        }
+        function checkLastSeen(){
+            $.ajax({
+                url: 'update_last_seen.php',
+                type: 'post',
+                success: function(data){
+                    if (data) {
+                        window.location.href = data;
+                    }
+                },
+                complete:function(data){
+                    setTimeout(checkLastSeen, 5000);
+                }
+            });
         }
     </script>" : "")
 . "</head>";

@@ -21,6 +21,13 @@ if (!isset($_SESSION['user']) || !$_SESSION['user']->isUser()) {
     die();
 }
 
+$user = $_SESSION['user'];
+if (time() - $user->getLastSeen() > 15) {
+    header("Location: logout.php");
+    die();
+}
+$user->setLastSeen(time());
+
 if (isset($_POST['addToCart'])) {
     $isUpdated = $util->addProductToCart($_POST['addToCart'], session_id());
     if ($isUpdated) {
