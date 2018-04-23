@@ -20,10 +20,10 @@ if (isset($_POST['clearCart'])) {
     $util->clearCart();
 }
 
-if (!isset($_SESSION['isUser']) && !$_SESSION['isUser']) {
+if (isset($_SESSION['isUser']) && empty($_SESSION['isUser']) && $_SESSION['isUser'] !== true) {
     header("Location: logout.php");
     die();
-} else if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) {
+} else if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] !== false) {
     header("Location: logout.php");
     die();
 }

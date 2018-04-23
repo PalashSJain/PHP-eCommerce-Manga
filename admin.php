@@ -16,6 +16,14 @@ session_start();
 $util = new LIB_project1();
 $util->onLoad();
 
+if (isset($_SESSION['isAdmin']) && empty($_SESSION['isAdmin']) && $_SESSION['isAdmin'] !== true) {
+    header("Location: logout.php");
+    die();
+} else if (isset($_SESSION['isUser']) && $_SESSION['isUser'] !== false) {
+    header("Location: logout.php");
+    die();
+}
+
 $validator = new FormValidator();
 
 // $option is used for setting the dropdown option for updating a new product
