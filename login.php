@@ -33,32 +33,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $password = $validator->parsePassword($_POST['Password']);
 
     if ($userID['status'] && $password['status']) {
-        $isAdmin = $util->isAdmin($userID['data'], $password['data']);
-        if ($isAdmin === true) {
-            // restart session if admin logged in
+        $user = $util->getUser($userID['data'], $password['data']);
+        if (gettype($user) == object && get_class($user) == User) {
             session_unset();
             session_destroy();
             session_start();
-            $_SESSION['isAdmin'] = true;
-            $_SESSION['isUser'] = false;
-
-            // Go to admin.php if successfully logged in
-            header("Location: admin.php");
-            die();
+            if ($user->getRole() == Constants::ROLE_ADMIN) {
+                $_SESSION['isAdmin'] = $user;
+                unset($_SESSION['isUser']);
+                header("Location: admin.php");
+                die();
+            } else if ($user->getRole() == Constants::ROLE_USER) {
+                unset($_SESSION['isAdmin']);
+                $_SESSION['isUser'] = $user;
+                header("Location: index.php");
+                die();
+            } else {
+                $message = "Unauthorized access";
+            }
+        } else {
+            $message = $user;
         }
-        $isUser = $util->isUser($userID['data'], $password['data']);
-        if ($isUser === true) {
-            session_unset();
-            session_destroy();
-            session_start();
-            $_SESSION['isUser'] = true;
-            $_SESSION['isAdmin'] = false;
-
-            // Go to admin.php if successfully logged in
-            header("Location: index.php");
-            die();
-        }
-        $message = $isUser;
     } else {
         if (!$userID['status']) {
             $message = $userID['error'];

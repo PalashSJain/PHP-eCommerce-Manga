@@ -6,19 +6,20 @@
  * Time: 10:11 PM
  */
 
-session_start();
-
 define('ROOT', dirname(__DIR__) . '/PHP-eCommerce-Manga/');
 include_once "utils/Navigation.php";
 include_once "utils/LIB_project1.php";
 
+session_start();
+
+
 $util = new LIB_project1();
 $util->onLoad();
 
-if (!isset($_SESSION['isUser']) && empty($_SESSION['isUser']) && $_SESSION['isUser'] !== true) {
+if (!isset($_SESSION['isUser']) || $_SESSION['isUser']->getRole() != Constants::ROLE_USER) {
     header("Location: logout.php");
     die();
-} else if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin'] !== false) {
+} else if (isset($_SESSION['isAdmin'])) {
     header("Location: logout.php");
     die();
 }

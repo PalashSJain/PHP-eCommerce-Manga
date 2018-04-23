@@ -96,19 +96,9 @@ class LIB_project1
         return $this->dbhelper->reduceQuantity($productId);
     }
 
-    /**
-     * @param $userID string user name
-     * @param $pwd string password
-     * @return bool|string true if user is admin, error message otherwise
-     */
-    public function isAdmin($userID, $pwd)
+    public function getUser($userID, $pwd)
     {
-        return $this->dbhelper->isAdmin($userID, $pwd);
-    }
-
-    public function isUser($userID, $pwd)
-    {
-        return $this->dbhelper->isUser($userID, $pwd);
+        return $this->dbhelper->getUser($userID, $pwd);
     }
 
     /**

@@ -45,41 +45,13 @@ class DBHelper
         return $this->db->getNumberOfProductsWithName($name) > 0;
     }
 
-    /**
-     * @param $username string
-     * @param $password string
-     * @return bool|string bool true if user is indeed an admin, string if not along with relevant information
-     */
-    public function isAdmin($username, $password)
+    public function getUser($username, $password)
     {
         $user = $this->db->getUser($username);
 
         if (isset($user) && !empty($user)) {
             if (password_verify($password, $user->getPassword())) {
-                if ($user->getRole() == Constants::ROLE_ADMIN) {
-                    return true;
-                } else {
-                    return "Attempt for unauthorized Access!";
-                }
-            } else {
-                return "Incorrect password for this user.";
-            }
-        } else {
-            return "User with this ID does not exist.";
-        }
-    }
-
-    public function isUser($username, $password)
-    {
-        $user = $this->db->getUser($username);
-
-        if (isset($user) && !empty($user)) {
-            if (password_verify($password, $user->getPassword())) {
-                if ($user->getRole() == Constants::ROLE_USER) {
-                    return true;
-                } else {
-                    return "Attempt for unauthorized Access!";
-                }
+                return $user;
             } else {
                 return "Incorrect password for this user.";
             }
@@ -131,5 +103,7 @@ class DBHelper
         $this->db->refillProductsQuantityFromCart($session_id);
         return $this->db->removeProductsFromCart($session_id) > 0;
     }
+
+
 
 }
