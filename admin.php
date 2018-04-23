@@ -16,10 +16,7 @@ session_start();
 $util = new LIB_project1();
 $util->onLoad();
 
-if (!isset($_SESSION['isAdmin']) || $_SESSION['isAdmin']->getRole() != Constants::ROLE_ADMIN) {
-    header("Location: logout.php");
-    die();
-} else if (isset($_SESSION['isUser'])) {
+if (!isset($_SESSION['user']) || !$_SESSION['user']->isAdmin()) {
     header("Location: logout.php");
     die();
 }
@@ -151,12 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_SESSION['oldproduct'] = null;
 }
 
-if (isset($_SESSION['isUser']) && $_SESSION['isUser']) {
-    header("Location: logout.php");
-    die();
-}
-
-if ($_SESSION['isAdmin']) {
+if ($_SESSION['user']->isAdmin()) {
     echo Navigation::header("Logout");
 
     echo "

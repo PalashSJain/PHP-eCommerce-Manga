@@ -6,17 +6,17 @@
  * Time: 12:52 AM
  */
 
-session_start();
-
 define('ROOT', dirname(__DIR__) . '/PHP-eCommerce-Manga/');
 include ROOT . "utils/Navigation.php";
 include ROOT . "utils/LIB_project1.php";
 include ROOT . "utils/FormValidator.php";
 
-if (isset($_SESSION['isAdmin']) && $_SESSION['isAdmin']) {
+session_start();
+
+if (isset($_SESSION['user']) && $_SESSION['user']->isAdmin()) {
     header("Location: admin.php");
     die();
-} else if (isset($_SESSION['isUser']) && $_SESSION['isUser']) {
+} else if (isset($_SESSION['user']) && $_SESSION['user']->isUser()) {
     header("Location: index.php");
     die();
 }
@@ -38,14 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             session_unset();
             session_destroy();
             session_start();
-            if ($user->getRole() == Constants::ROLE_ADMIN) {
-                $_SESSION['isAdmin'] = $user;
-                unset($_SESSION['isUser']);
+            if ($user->isAdmin()) {
+                $_SESSION['user'] = $user;
                 header("Location: admin.php");
                 die();
-            } else if ($user->getRole() == Constants::ROLE_USER) {
-                unset($_SESSION['isAdmin']);
-                $_SESSION['isUser'] = $user;
+            } else if ($user->isUser()) {
+                $_SESSION['user'] = $user;
                 header("Location: index.php");
                 die();
             } else {

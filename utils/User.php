@@ -19,4 +19,13 @@ class User
     public function getPassword(){
         return $this->password;
     }
+
+    public function isAdmin(){
+        return $this->getRole() == Constants::ROLE_ADMIN;
+    }
+
+    public function isUser(){
+        return $this->getRole() == Constants::ROLE_USER;
+    }
+
 }

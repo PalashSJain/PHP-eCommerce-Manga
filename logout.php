@@ -10,7 +10,6 @@ session_unset();
 session_destroy();
 session_start();
 
-$_SESSION['isAdmin'] = false;
-$_SESSION['isUser'] = false;
+unset($_SESSION['user']);
 header("Location: login.php");
 die();

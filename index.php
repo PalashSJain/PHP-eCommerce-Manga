@@ -16,10 +16,7 @@ session_start();
 $util = new LIB_project1();
 $util->onLoad();
 
-if (!isset($_SESSION['isUser']) || $_SESSION['isUser']->getRole() != Constants::ROLE_USER) {
-    header("Location: logout.php");
-    die();
-} else if (isset($_SESSION['isAdmin'])) {
+if (!isset($_SESSION['user']) || !$_SESSION['user']->isUser()) {
     header("Location: logout.php");
     die();
 }
