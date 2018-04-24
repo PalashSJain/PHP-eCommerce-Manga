@@ -87,9 +87,9 @@ class Navigation
 . ((isset($currentPage) && $currentPage != "Login") ?
     "<script type='text/javascript'>
         var isIdle = false, isWarning = false;
-        var warningInterval, idleInterval;
+        var warningInterval, idleInterval, lastSeenInterval;
         $(document).ready(function () {
-            setInterval(checkLastSeen, 5000);
+            lastSeenInterval = setInterval(checkLastSeen, 5000);
             warningInterval = setInterval(warningMessage, 30000);
             idleInterval = setInterval(timerIncrement, 60000); // 1 minute
             $(this).mousemove(function (e) {
@@ -114,9 +114,16 @@ class Navigation
         function timerIncrement() {
             clearInterval(warningInterval);
             clearInterval(idleInterval);
+            clearInterval(lastSeenInterval);
             $('#warningModal').modal('hide');
             $('#inactivityModal').modal('show');
             isIdle = true;
+            $.ajax({
+                url: 'clear_session.php',
+                type: 'post',
+                success: function(data){
+                },
+            });
         }
         function warningMessage() {
             clearInterval(warningInterval);
@@ -130,9 +137,6 @@ class Navigation
                     if (data) {
                         window.location.href = data;
                     }
-                },
-                complete:function(data){
-                    setTimeout(checkLastSeen, 5000);
                 }
             });
         }
