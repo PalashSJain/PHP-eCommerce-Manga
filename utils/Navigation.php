@@ -42,6 +42,9 @@ class Navigation
                   <div class='modal-body'>
                     You will be logged out if you are inactive for a minute!
                   </div>
+                  <div class='modal-footer'>
+                    <button type='button' class='btn btn-warning' onclick='extendSession()'>Extend Session</button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -78,12 +81,12 @@ class Navigation
         function toast() {
             var x = document.getElementById('snackbar');
             x.className = 'show';
-            setTimeout(function(){ x.className = x.className.replace('show', ''); }, 3000);
+            setTimeout(function(){ x.className = x.className.replace('show', ''); }, 30000);
         }
     </script>"
 . ((isset($currentPage) && $currentPage != "Login") ?
     "<script type='text/javascript'>
-        var isIdle = false;
+        var isIdle = false, isWarning = false;
         var warningInterval, idleInterval;
         $(document).ready(function () {
             setInterval(checkLastSeen, 5000);
@@ -93,7 +96,7 @@ class Navigation
                 if (!isIdle) {
                     clearInterval(warningInterval);
                     clearInterval(idleInterval);
-                    $('#warningModal').modal('hide');
+//                    $('#warningModal').modal('hide');
                     warningInterval = setInterval(warningMessage, 30000);
                     idleInterval = setInterval(timerIncrement, 60000);
                 }
@@ -102,7 +105,7 @@ class Navigation
                 if (!isIdle) {
                     clearInterval(warningInterval);
                     clearInterval(idleInterval);
-                    $('#warningModal').modal('hide');
+//                    $('#warningModal').modal('hide');
                     warningInterval = setInterval(warningMessage, 30000);
                     idleInterval = setInterval(timerIncrement, 60000);
                 }
@@ -132,6 +135,15 @@ class Navigation
                     setTimeout(checkLastSeen, 5000);
                 }
             });
+        }
+        function extendSession() {
+            clearInterval(warningInterval);
+            clearInterval(idleInterval);
+            $('#warningModal').modal('hide');
+            $('#inactivityModal').modal('hide');
+            warningInterval = setInterval(warningMessage, 30000);
+            idleInterval = setInterval(timerIncrement, 60000);
+            isIdle = false;
         }
     </script>" : "")
 . "</head>";
