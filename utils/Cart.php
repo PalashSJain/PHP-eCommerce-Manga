@@ -9,4 +9,5 @@
 class Cart
 {
     private $sessionID, $productID, $quantity;
+    //
 }
